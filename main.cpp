@@ -25,7 +25,6 @@ int main(int argc, char** argv) {
 	_emulationState = EmulationState::START;
 	emulationLoop();
 
-	cout << "shouildn't be here" << endl;
 	return 0;
 }
 
@@ -44,11 +43,41 @@ bool initializeSDL() {
 void processInput() {
 	SDL_Event evnt;
 
-	while (SDL_PollEvent(&evnt)) {
-		switch (evnt.type) {
-		case SDL_QUIT:
+	while (SDL_PollEvent(&evnt) != 0) {
+		if (evnt.type == SDL_QUIT) {
 			_emulationState = EmulationState::STOP;
-			break;
+		}
+		else if (evnt.type == SDL_KEYDOWN) {
+			switch (evnt.key.keysym.sym) {
+			case SDLK_1:
+				cout << "Pressed 1" << endl;
+				break;
+			case SDLK_2:
+				cout << "Pressed 2" << endl;
+				break;
+			case SDLK_3:
+				cout << "Pressed 3" << endl;
+				break;
+			case SDLK_4:
+				cout << "Pressed 4" << endl;
+				break;
+			}
+		}
+		else if (evnt.type == SDL_KEYUP) {
+			switch (evnt.key.keysym.sym) {
+			case SDLK_1:
+				cout << "Let go of 1" << endl;
+				break;
+			case SDLK_2:
+				cout << "Let go of 2" << endl;
+				break;
+			case SDLK_3:
+				cout << "Let go of 3" << endl;
+				break;
+			case SDLK_4:
+				cout << "Let go of 4" << endl;
+				break;
+			}
 		}
 	}
 }
