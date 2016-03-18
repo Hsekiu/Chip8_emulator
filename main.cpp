@@ -1,4 +1,7 @@
+#include <Windows.h>
+
 #include <SDL/SDL.h>
+#include <GL/glew.h>
 
 #include <iostream>
 using namespace std;
@@ -9,7 +12,8 @@ const int DISPLAY_HEIGHT = 320;
 enum class EmulationState { START, PAUSE, STOP };
 EmulationState _emulationState;
 
-SDL_Window *window;
+SDL_Window *_window;
+SDL_GLContext glContext;
 
 char* title = "Chip8 emulator by Petr Krakora";
 
@@ -17,6 +21,7 @@ char* title = "Chip8 emulator by Petr Krakora";
 void emulationLoop();
 bool initializeSDL();
 void processInput();
+void drawScreen();
 
 int main(int argc, char** argv) {
 
@@ -31,13 +36,27 @@ int main(int argc, char** argv) {
 void emulationLoop() {
 	while (_emulationState == EmulationState::START) {
 		processInput();
+		drawScreen();
 	}
 }
 
 bool initializeSDL() {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL);
+	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL);
+	//Save openGl states
+	glContext = SDL_GL_CreateContext(_window);
+	//Create a double buffered window to prevent artifacts
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	//Set screen to black (red, green, blue, alpha)
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	return true;
+}
+
+void drawScreen() {
+	glClearDepth(1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	SDL_GL_SwapWindow(_window);
 }
 
 void processInput() {
