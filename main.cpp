@@ -2,12 +2,19 @@
 
 #include <SDL/SDL.h>
 #include <GL/glew.h>
+#include "chip8.h"
 
+#include <sstream>
 #include <iostream>
+#include <bitset>
 using namespace std;
 
 const int DISPLAY_WIDTH = 640;
 const int DISPLAY_HEIGHT = 320;
+float xs = 0;
+float ys = 0;
+float heights;
+float widths;
 
 enum class EmulationState { START, PAUSE, STOP };
 EmulationState _emulationState;
@@ -16,9 +23,11 @@ SDL_Window *_window;
 SDL_GLContext glContext;
 
 char* title = "Chip8 emulator by Petr Krakora";
+chip8 chip;
 
 //Forward declarations
 void emulationLoop();
+bool initializeChip(string game);
 bool initializeSDL();
 void processInput();
 void drawScreen();
@@ -28,9 +37,28 @@ int main(int argc, char** argv) {
 	initializeSDL();
 
 	_emulationState = EmulationState::START;
+	//std::cout << "Argument 1 is: " << argv[1] << std::endl;
+	//initializeChip(argv[1]);
+	string a = "25";
+	string b = "AC";
+	std::istringstream buffer(a);
+	uint64_t value;
+	buffer >> std::hex >> value;
+	std::cout << std::dec << value << endl;
+	int test = 0x25;
+	std::cout << test << std::endl;
+
+	widths = 1.0 / 64;
+	heights = 1.0 / 32;
+
 	emulationLoop();
 
 	return 0;
+}
+
+bool initializeChip(string game) {
+	chip.loadGame(game);
+	return 1;
 }
 
 void emulationLoop() {
@@ -45,6 +73,9 @@ bool initializeSDL() {
 	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL);
 	//Save openGl states
 	glContext = SDL_GL_CreateContext(_window);
+	GLenum errorGl = glewInit();
+	if (errorGl != GLEW_OK)
+		cout << "Couldnt Initalize Glew!" << endl;
 	//Create a double buffered window to prevent artifacts
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	//Set screen to black (red, green, blue, alpha)
@@ -52,9 +83,58 @@ bool initializeSDL() {
 	return true;
 }
 
+void drawSquare(float height, float width, float x, float y) {
+
+	GLuint vbo = 0;
+	
+	if (vbo == 0) {
+		glGenBuffers(1, &vbo);
+	}
+
+	x -= 1.0;
+	y += 1.0;
+	
+	GLfloat vertData[] = {
+		x, y,
+		x + width, y,
+		x, y - height,
+		//second triangle
+		x, y - height,
+		x + width, y,
+		x + width, y - height
+	};
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertData), vertData, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDeleteBuffers(1, &vbo);
+	
+}
+
 void drawScreen() {
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	for (int j = 0; j < 32; j++) {
+
+		for (int i = 0; i < 64; i++) {
+			drawSquare(heights * 2, widths * 2, xs, ys);
+			xs += widths * 2;
+		}
+		xs = 0;
+		ys -= heights * 2;
+	}
+	
+	xs = 0;
+	ys = 0;
 
 	SDL_GL_SwapWindow(_window);
 }
@@ -73,6 +153,7 @@ void processInput() {
 				break;
 			case SDLK_2:
 				cout << "Pressed 2" << endl;
+				ys += 0.01;
 				break;
 			case SDLK_3:
 				cout << "Pressed 3" << endl;
