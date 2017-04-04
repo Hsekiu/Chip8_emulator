@@ -62,15 +62,13 @@ bool initializeChip(string game) {
 }
 
 void emulationLoop() {
-	//while (_emulationState == EmulationState::START) {
+	chip.loadGame("ibm");
+
+	while (_emulationState == EmulationState::START) {
 		processInput();
-		chip.loadGame("ibm");
 		chip.cycle();
 		drawScreen();
-		while (true) {
-
-		}
-	//}
+	}
 }
 
 bool initializeSDL() {
@@ -131,8 +129,10 @@ void drawScreen() {
 	for (int j = 0; j < 32; j++) {
 
 		for (int i = 0; i < 64; i++) {
-			drawSquare(heights * 2, widths * 2, xs, ys);
-			xs += widths * 2;
+			if (chip.screen[j][i] == 1) {
+				drawSquare(heights * 2, widths * 2, xs, ys);
+			}
+				xs += widths * 2;
 		}
 		xs = 0;
 		ys -= heights * 2;
@@ -158,7 +158,6 @@ void processInput() {
 				break;
 			case SDLK_2:
 				cout << "Pressed 2" << endl;
-				ys += 0.01;
 				break;
 			case SDLK_3:
 				cout << "Pressed 3" << endl;
