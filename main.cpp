@@ -62,10 +62,15 @@ bool initializeChip(string game) {
 }
 
 void emulationLoop() {
-	while (_emulationState == EmulationState::START) {
+	//while (_emulationState == EmulationState::START) {
 		processInput();
+		chip.loadGame("ibm");
+		chip.cycle();
 		drawScreen();
-	}
+		while (true) {
+
+		}
+	//}
 }
 
 bool initializeSDL() {
