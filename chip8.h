@@ -20,7 +20,7 @@ public:
 	unsigned short screen[32][64];
 
 private:
-	std::string opcode;
+	int opcode;
 	unsigned char instruction;
 	unsigned char memory[4096];
 	unsigned char V[16];
