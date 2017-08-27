@@ -51,21 +51,45 @@ bool chip8::cycle() {
 	opcode = (memory[pc + start] << 8) + memory[pc + start + 1];
 
 	switch (opcode & 0xF000) {
-		case 0x1000: //CLS
-			std::cout << "0 called" << std::endl;
-			memset(screen, 0, sizeof screen);
+		case 0x0000: //SYS addr
+
+			switch (opcode & 0x00FF) {
+
+				case 0x00E0: //CLS
+					std::cout << "CLS called" << std::endl;
+					memset(screen, 0, sizeof screen);
+					pc += 2;
+					break;
+
+				case 0x00EE: //RET
+					std::cout << "RET called" << std::endl;
+					pc += 2;
+					break;
+
+				default:
+					std::cout << "Opcode not implemented in 0x0000" << std::endl;
+					pc += 2;
+			}
 			pc += 2;
 			break;
+
+		case 0x1000: //JP addr
+			std::cout << "JP addr called" << std::endl;
+			pc += 2;
+			break;
+
 		case 0x6000: //LD Vx, byte
-			std::cout << "6 called" << std::endl;
-			//V[std::stoi(opcode.substr(1, 1), 0, 16)] = std::stoi(opcode.substr(2, 3), 0, 16);
+			std::cout << "LD Vx, byte called" << std::endl;
+			V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
 			pc += 2;
 			break;
+
 		case 0xA000: //LD I, addr
-			std::cout << "A called" << std::endl;
-			//I = std::stoi(opcode.substr(1, 3), 0, 16);
+			std::cout << "LD I, addr" << std::endl;
+			I = opcode & 0x0FFF;
 			pc += 2;
 			break;
+
 		default:
 			std::cout << "Opcode not implemented" << std::endl;
 	}
