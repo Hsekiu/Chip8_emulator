@@ -74,13 +74,27 @@ bool chip8::cycle() {
 			break;
 
 		case 0x1000: //JP addr
-			std::cout << "JP addr called" << std::endl;
+			pc = opcode & 0x0FFF;
+			pc += 2;
+			break;
+
+		case 0x3000: //SE Vx, byte
+			std::cout << "SE Vx, byte called" << std::endl;
+			if ((V[(opcode & 0x0F00) >> 8]) == (opcode & 0x0FFF)) {
+				pc += 2;
+			}
 			pc += 2;
 			break;
 
 		case 0x6000: //LD Vx, byte
 			std::cout << "LD Vx, byte called" << std::endl;
 			V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
+			pc += 2;
+			break;
+
+		case 0x7000: //ADD Vx, byte
+			std::cout << "Add Vx, byte called" << std::endl;
+			V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
 			pc += 2;
 			break;
 
