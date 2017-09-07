@@ -78,6 +78,13 @@ bool chip8::cycle() {
 			pc += 2;
 			break;
 
+		case 0x200: //CALL addr
+			std::cout << "CALL addr called" << std::endl;
+			stack[stackPointer] = pc;
+			stackPointer++;
+			pc = opcode & 0x0FFF;
+			break;
+
 		case 0x3000: //SE Vx, byte
 			std::cout << "SE Vx, byte called" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) == (opcode & 0x0FFF)) {
@@ -103,6 +110,18 @@ bool chip8::cycle() {
 			I = opcode & 0x0FFF;
 			pc += 2;
 			break;
+
+		case 0xD000: //DRW Vx, Vy, nibble
+			std::cout << "DRW Vx, Vy, nibble" << std::endl;
+			short x = ((opcode & 0x0F00) >> 8);
+			short y = ((opcode & 0x00F0) >> 4);
+			short n = (opcode & 0x000F);
+
+			screen[x][y] = 1;
+			pc += 2;
+
+			break;
+
 
 		default:
 			std::cout << "Opcode not implemented" << std::endl;

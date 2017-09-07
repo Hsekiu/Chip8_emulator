@@ -28,5 +28,6 @@ private:
 	unsigned short I;
 	unsigned short pc;
 	unsigned short stack[16];
+	unsigned short stackPointer;
 };
 
