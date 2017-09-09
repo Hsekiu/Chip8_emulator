@@ -52,85 +52,113 @@ bool chip8::cycle() {
 
 	switch (opcode & 0xF000) {
 		case 0x0000: //SYS addr
-
+		{
 			switch (opcode & 0x00FF) {
 
 				case 0x00E0: //CLS
-					std::cout << "CLS called" << std::endl;
+				{
+					std::cout << "Clear the display." << std::endl;
 					memset(screen, 0, sizeof screen);
 					pc += 2;
-					break;
+				}
+				break;
 
 				case 0x00EE: //RET
+				{
 					std::cout << "RET called" << std::endl;
 					pc += 2;
-					break;
+				}
+				break;
 
-				default:
-					std::cout << "Opcode not implemented in 0x0000" << std::endl;
-					pc += 2;
+			default:
+				std::cout << "Opcode not implemented in 0x0000" << std::endl;
+				pc += 2;
 			}
 			pc += 2;
-			break;
+		}
+		break;
 
 		case 0x1000: //JP addr
+		{
 			pc = opcode & 0x0FFF;
 			pc += 2;
-			break;
+		}
+		break;
 
 		case 0x200: //CALL addr
+		{
 			std::cout << "CALL addr called" << std::endl;
 			stack[stackPointer] = pc;
 			stackPointer++;
 			pc = opcode & 0x0FFF;
-			break;
+		}
+		break;
 
 		case 0x3000: //SE Vx, byte
+		{
 			std::cout << "SE Vx, byte called" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) == (opcode & 0x0FFF)) {
 				pc += 2;
 			}
 			pc += 2;
-			break;
+		}
+		break;
 
 		case 0x4000: //SNE Vx, byte
+		{
 			std::cout << "SNE Vx, byte" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) != (opcode & 0x0FFF)) {
 				pc += 2;
 			}
-			break;
+		}
+		break;
 
 		case 0x5000: //SE Vx, Vy
+		{
 			std::cout << "SE Vx, Vy" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) == ((opcode & 0x00F0) >> 4)) {
 				pc += 2;
 			}
-			break;
+		}
+		break;
 
 		case 0x6000: //LD Vx, byte
-			std::cout << "LD Vx, byte called" << std::endl;
-			V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
+		{
+			char x = (opcode & 0x0F00) >> 8;
+			char kk = opcode & 0x00FF;
+			std::cout << "Set V[" << (int)x << "] = " << (int)(kk) << std::endl;
+			V[x] = kk;
 			pc += 2;
-			break;
+		}
+		break;
 
 		case 0x7000: //ADD Vx, byte
-			std::cout << "Add Vx, byte called" << std::endl;
-			V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
+		{
+			char x = (opcode & 0x0F00) >> 8;
+			char kk = opcode & 0x00FF;
+			std::cout << "Set " << (int)V[x] << " + " << (int)kk << " = " << ((int)V[x] + (int)kk) << std::endl;
+			V[x] += kk;
 			pc += 2;
-			break;
+		}
+		break;
 
 		case 0xA000: //LD I, addr
-			std::cout << "LD I, addr" << std::endl;
-			I = opcode & 0x0FFF;
+		{
+			short nn = opcode & 0x0FFF;
+			std::cout << "Set I = " << nn << std::endl;
+			I = nn;
 			pc += 2;
-			break;
+		}
+		break;
 
 		case 0xD000: //DRW Vx, Vy, nibble
-			std::cout << "DRW Vx, Vy, nibble" << std::endl;
+		{
 			char x = ((opcode & 0x0F00) >> 8);
 			char y = ((opcode & 0x00F0) >> 4);
 			char n = (opcode & 0x000F);
 			char line = 0;
+
+			std::cout << "Draw at (" << (int)V[x] << ", " << (int)V[y] << ")." << std::endl;
 
 			V[0xF] = 0;
 
@@ -142,18 +170,18 @@ bool chip8::cycle() {
 
 						int loc = (i + x) + ((j + y) * 64);
 
-						if (*screen[loc] == ((unsigned short) 1)) {
+						/*if (*screen[loc] == ((unsigned short)1)) {
 							V[0xF] = 1;
 						}
 
-						*screen[loc] ^= 1;
+						*screen[loc] ^= 1; */
 					}
 				}
 			}
 
 			pc += 2;
-
-			break;
+		}
+		break;
 
 
 		default:
