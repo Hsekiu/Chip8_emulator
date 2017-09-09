@@ -93,6 +93,20 @@ bool chip8::cycle() {
 			pc += 2;
 			break;
 
+		case 0x4000: //SNE Vx, byte
+			std::cout << "SNE Vx, byte" << std::endl;
+			if ((V[(opcode & 0x0F00) >> 8]) != (opcode & 0x0FFF)) {
+				pc += 2;
+			}
+			break;
+
+		case 0x5000: //SE Vx, Vy
+			std::cout << "SE Vx, Vy" << std::endl;
+			if ((V[(opcode & 0x0F00) >> 8]) == ((opcode & 0x00F0) >> 4)) {
+				pc += 2;
+			}
+			break;
+
 		case 0x6000: //LD Vx, byte
 			std::cout << "LD Vx, byte called" << std::endl;
 			V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
