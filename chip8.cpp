@@ -50,6 +50,8 @@ bool chip8::cycle() {
 
 	opcode = (memory[pc + start] << 8) + memory[pc + start + 1];
 
+	std::cout << "Opcode is: " << (hexString)(opcode & 0xFFFF) << std::endl;
+
 	switch (opcode & 0xF000) {
 		case 0x0000: //SYS addr
 		{
@@ -57,7 +59,7 @@ bool chip8::cycle() {
 
 				case 0x00E0: //CLS
 				{
-					std::cout << "Clear the display." << std::endl;
+					std::cout << " - Clear the display." << std::endl;
 					memset(screen, 0, sizeof screen);
 					pc += 2;
 				}
@@ -65,30 +67,29 @@ bool chip8::cycle() {
 
 				case 0x00EE: //RET
 				{
-					std::cout << "RET called" << std::endl;
+					std::cout << " - RET called" << std::endl;
 					pc += 2;
 				}
 				break;
 
 			default:
-				std::cout << "Opcode not implemented in 0x0000" << std::endl;
+				std::cout << " - Opcode not implemented in 0x0000" << std::endl;
 				pc += 2;
 			}
-			pc += 2;
 		}
 		break;
 
 		case 0x1000: //JP addr
 		{
 			char nn = opcode & 0x0FFF;
-			std::cout << "Jump to address " << (int)(opcode & 0x0FFF) << std::endl;
+			std::cout << " - Jump to address " << (hexString)(opcode & 0x0FFF) << std::endl;
 			pc = nn;
 		}
 		break;
 
 		case 0x2000: //CALL addr
 		{
-			std::cout << "CALL addr called" << std::endl;
+			std::cout << " - CALL addr called" << std::endl;
 			stack[stackPointer] = pc;
 			stackPointer++;
 			pc = opcode & 0x0FFF;
@@ -97,7 +98,7 @@ bool chip8::cycle() {
 
 		case 0x3000: //SE Vx, byte
 		{
-			std::cout << "SE Vx, byte called" << std::endl;
+			std::cout << " - SE Vx, byte called" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) == (opcode & 0x0FFF)) {
 				pc += 2;
 			}
@@ -107,7 +108,7 @@ bool chip8::cycle() {
 
 		case 0x4000: //SNE Vx, byte
 		{
-			std::cout << "SNE Vx, byte" << std::endl;
+			std::cout << " - SNE Vx, byte" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) != (opcode & 0x0FFF)) {
 				pc += 2;
 			}
@@ -116,7 +117,7 @@ bool chip8::cycle() {
 
 		case 0x5000: //SE Vx, Vy
 		{
-			std::cout << "SE Vx, Vy" << std::endl;
+			std::cout << " - SE Vx, Vy" << std::endl;
 			if ((V[(opcode & 0x0F00) >> 8]) == ((opcode & 0x00F0) >> 4)) {
 				pc += 2;
 			}
@@ -127,7 +128,7 @@ bool chip8::cycle() {
 		{
 			char x = (opcode & 0x0F00) >> 8;
 			char kk = opcode & 0x00FF;
-			std::cout << "Set V[" << (int)x << "] = " << (int)(kk) << std::endl;
+			std::cout << " - Set V[" << (int)x << "] = " << (hexString)(kk) << std::endl;
 			V[x] = kk;
 			pc += 2;
 		}
@@ -137,7 +138,7 @@ bool chip8::cycle() {
 		{
 			char x = (opcode & 0x0F00) >> 8;
 			char kk = opcode & 0x00FF;
-			std::cout << "Set " << (int)V[x] << " + " << (int)kk << " = " << ((int)V[x] + (int)kk) << std::endl;
+			std::cout << " - Set " << (int)V[x] << " + " << (int)kk << " = " << ((int)V[x] + (int)kk) << std::endl;
 			V[x] += kk;
 			pc += 2;
 		}
@@ -146,7 +147,7 @@ bool chip8::cycle() {
 		case 0xA000: //LD I, addr
 		{
 			short nn = opcode & 0x0FFF;
-			std::cout << "Set I = " << nn << std::endl;
+			std::cout << " - Set I = " << (hexString)(nn) << std::endl;
 			I = nn;
 			pc += 2;
 		}
@@ -159,7 +160,7 @@ bool chip8::cycle() {
 			char n = (opcode & 0x000F);
 			char line = 0;
 
-			std::cout << "Draw at (" << (int)V[x] << ", " << (int)V[y] << ")." << std::endl;
+			std::cout << " - Draw at (" << (int)V[x] << ", " << (int)V[y] << ")." << std::endl;
 
 			V[0xF] = 0;
 
@@ -186,7 +187,7 @@ bool chip8::cycle() {
 
 
 		default:
-			std::cout << "Opcode not implemented" << std::endl;
+			std::cout << " - Opcode not implemented" << std::endl;
 	}
 
 	return true;

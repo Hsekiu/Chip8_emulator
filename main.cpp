@@ -39,14 +39,6 @@ int main(int argc, char** argv) {
 	_emulationState = EmulationState::START;
 	//std::cout << "Argument 1 is: " << argv[1] << std::endl;
 	//initializeChip(argv[1]);
-	string a = "25";
-	string b = "AC";
-	std::istringstream buffer(a);
-	uint64_t value;
-	buffer >> std::hex >> value;
-	std::cout << std::dec << value << endl;
-	int test = 0x25;
-	std::cout << test << std::endl;
 
 	widths = 1.0 / 64;
 	heights = 1.0 / 32;
