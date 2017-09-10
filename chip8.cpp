@@ -80,12 +80,13 @@ bool chip8::cycle() {
 
 		case 0x1000: //JP addr
 		{
-			pc = opcode & 0x0FFF;
-			pc += 2;
+			char nn = opcode & 0x0FFF;
+			std::cout << "Jump to address " << (int)(opcode & 0x0FFF) << std::endl;
+			pc = nn;
 		}
 		break;
 
-		case 0x200: //CALL addr
+		case 0x2000: //CALL addr
 		{
 			std::cout << "CALL addr called" << std::endl;
 			stack[stackPointer] = pc;
