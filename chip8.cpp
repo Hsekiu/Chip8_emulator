@@ -155,8 +155,8 @@ bool chip8::cycle() {
 
 		case 0xD000: //DRW Vx, Vy, nibble
 		{
-			char x = ((opcode & 0x0F00) >> 8);
-			char y = ((opcode & 0x00F0) >> 4);
+			char x = V[((opcode & 0x0F00) >> 8)];
+			char y = V[((opcode & 0x00F0) >> 4)];
 			char n = (opcode & 0x000F);
 			char line = 0;
 
@@ -168,15 +168,14 @@ bool chip8::cycle() {
 				line = memory[I + i];
 
 				for (int j = 0; j < 8; j++) {
-					if (((line & (0x80 >> i)) != 0)) {
 
-						int loc = (i + x) + ((j + y) * 64);
+					if (((line & (0x80 >> j)) != 0)) {
 
-						/*if (*screen[loc] == ((unsigned short)1)) {
+						if (screen[y + i][x + j] == 1) {
 							V[0xF] = 1;
 						}
 
-						*screen[loc] ^= 1; */
+					screen[y + i][x + j] ^= 1;
 					}
 				}
 			}
