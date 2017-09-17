@@ -54,11 +54,15 @@ bool initializeChip(string game) {
 }
 
 void emulationLoop() {
-	chip.loadGame("ibm");
+	chip.loadGame("Maze [David Winter, 199x]");
 
-	while (_emulationState == EmulationState::START) {
+	while (_emulationState != EmulationState::STOP) {
 		processInput();
-		chip.cycle();
+
+		if (_emulationState != EmulationState::PAUSE) {
+			chip.cycle();
+		}
+
 		drawScreen();
 	}
 }
@@ -157,6 +161,14 @@ void processInput() {
 			case SDLK_4:
 				cout << "Pressed 4" << endl;
 				break;
+			case SDLK_SPACE:
+				cout << "Pressed Space" << endl;
+				if (_emulationState == EmulationState::PAUSE) {
+					_emulationState = EmulationState::START;
+				}
+				else {
+					_emulationState = EmulationState::PAUSE;
+				}
 			}
 		}
 		else if (evnt.type == SDL_KEYUP) {

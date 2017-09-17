@@ -156,9 +156,10 @@ bool chip8::cycle() {
 		case 0xC000:
 		{
 			char x = (opcode & 0x0F00) >> 8;
-			char kk = (opcode & 0x0FFF);
-			int random = rand() % 0 + 255;
-			std::cout << " - Set V[" << (int)x << "] to random number" << (int)((kk)& (char)random) << std::endl;
+			char kk = (opcode & 0x00FF);
+			int random = rand() % 255;
+			std::cout << " - Set V[" << (int)x << "] to random number " << (int)((kk) & random) << std::endl;
+			V[x] = kk & random;
 			pc += 2;
 		}
 		break;
