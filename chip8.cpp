@@ -24,15 +24,15 @@ std::string chip8::hexString(int a)
 	return result;
 }
 
-
-
 void chip8::init() {
-	pc = start + 2;
+	pc = 0x000;
 	opcode = 0;
 
 	memset(memory, 0, sizeof memory);
 	memset(stack, 0, sizeof stack);
 	memset(screen, 0, sizeof screen);
+
+	srand(time(NULL));
 }
 
 bool chip8::loadGame(std::string game) {

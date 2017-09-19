@@ -58,6 +58,7 @@ bool initializeChip(string game) {
 }
 
 void emulationLoop() {
+	chip.init();
 	chip.loadGame("Maze [David Winter, 199x]");
 
 	while (_emulationState != EmulationState::STOP) {
