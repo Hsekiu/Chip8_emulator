@@ -25,6 +25,8 @@ SDL_GLContext glContext;
 char* title = "Chip8 emulator by Petr Krakora";
 chip8 chip;
 
+bool step;
+
 //Forward declarations
 void emulationLoop();
 bool initializeChip(string game);
@@ -36,12 +38,14 @@ int main(int argc, char** argv) {
 
 	initializeSDL();
 
-	_emulationState = EmulationState::START;
+	_emulationState = EmulationState::PAUSE;
 	//std::cout << "Argument 1 is: " << argv[1] << std::endl;
 	//initializeChip(argv[1]);
 
 	widths = 1.0 / 64;
 	heights = 1.0 / 32;
+
+	step = false;
 
 	emulationLoop();
 
@@ -59,8 +63,9 @@ void emulationLoop() {
 	while (_emulationState != EmulationState::STOP) {
 		processInput();
 
-		if (_emulationState != EmulationState::PAUSE) {
+		if (_emulationState != EmulationState::PAUSE || step == true) {
 			chip.cycle();
+			step = false;
 		}
 
 		if (chip.drawFlag == true) {
@@ -85,7 +90,7 @@ bool initializeSDL() {
 	return true;
 }
 
-void drawSquare(float height, float width, float x, float y) {
+void drawSquare(float height, float width, float x, float y, float color) {
 
 	GLuint vbo = 0;
 	
@@ -106,12 +111,14 @@ void drawSquare(float height, float width, float x, float y) {
 		x + width, y - height
 	};
 
+	glColor3f(color, color, color);
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertData), vertData, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
+	
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	
 	glDisableVertexAttribArray(0);
@@ -123,13 +130,18 @@ void drawSquare(float height, float width, float x, float y) {
 
 void drawScreen() {
 	glClearDepth(1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	for (int j = 0; j < 32; j++) {
 
 		for (int i = 0; i < 64; i++) {
 			if (chip.screen[j][i] == 1) {
-				drawSquare(heights * 2, widths * 2, xs, ys);
+				//Draw white square
+				drawSquare(heights * 2, widths * 2, xs, ys, 1.0f);
+			}
+			else {
+				//Draw black square
+				drawSquare(heights * 2, widths * 2, xs, ys, 0.0f);
 			}
 				xs += widths * 2;
 		}
@@ -165,7 +177,7 @@ void processInput() {
 				cout << "Pressed 4" << endl;
 				break;
 			case SDLK_SPACE:
-				cout << "Pressed Space" << endl;
+				//cout << "Pressed Space" << endl;
 				if (_emulationState == EmulationState::PAUSE) {
 					_emulationState = EmulationState::START;
 				}
@@ -187,6 +199,10 @@ void processInput() {
 				break;
 			case SDLK_4:
 				cout << "Let go of 4" << endl;
+				break;
+			case SDLK_LEFT:
+				//cout << "Pressed Left Arrow" << endl;
+				step = true;
 				break;
 			}
 		}
