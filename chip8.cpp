@@ -52,6 +52,17 @@ bool chip8::cycle() {
 
 	std::cout << "Opcode is: " << (hexString)(opcode & 0xFFFF) << std::endl;
 
+	//A 4-bit value, the lower 4 bits of the high byte of the instruction
+	char x = (opcode & 0x0F00) >> 8;
+	//A 4-bit value, the upper 4 bits of the low byte of the instruction
+	char y = (opcode & 0x00F0) >> 4;
+	//An 8-bit value, the lowest 8 bits of the instruction
+	char kk = opcode & 0x00FF; //byte
+	//A 12-bit value, the lowest 12 bits of the instruction
+	char nnn = opcode & 0x0FFF; //addr
+	//A 4-bit value, the lowest 4 bits of the instruction
+	char n = (opcode & 0x000F); //nibble
+	
 	switch (opcode & 0xF000) {
 		case 0x0000: //SYS addr
 		{
@@ -81,9 +92,8 @@ bool chip8::cycle() {
 
 		case 0x1000: //JP addr
 		{
-			char nn = opcode & 0x0FFF;
-			std::cout << " - Jump to address " << (hexString)(opcode & 0x0FFF) << std::endl;
-			pc = nn;
+			std::cout << " - Jump to address " << (hexString)(nnn) << std::endl;
+			pc = nnn;
 		}
 		break;
 
@@ -99,7 +109,7 @@ bool chip8::cycle() {
 		case 0x3000: //SE Vx, byte
 		{
 			std::cout << " - SE Vx, byte called" << std::endl;
-			if ((V[(opcode & 0x0F00) >> 8]) == (opcode & 0x0FFF)) {
+			if ((V[x]) == nnn) {
 				pc += 2;
 			}
 			pc += 2;
@@ -109,7 +119,7 @@ bool chip8::cycle() {
 		case 0x4000: //SNE Vx, byte
 		{
 			std::cout << " - SNE Vx, byte" << std::endl;
-			if ((V[(opcode & 0x0F00) >> 8]) != (opcode & 0x0FFF)) {
+			if ((V[x]) != nnn) {
 				pc += 2;
 			}
 		}
@@ -118,7 +128,7 @@ bool chip8::cycle() {
 		case 0x5000: //SE Vx, Vy
 		{
 			std::cout << " - SE Vx, Vy" << std::endl;
-			if ((V[(opcode & 0x0F00) >> 8]) == ((opcode & 0x00F0) >> 4)) {
+			if ((V[x]) == y) {
 				pc += 2;
 			}
 		}
@@ -126,8 +136,6 @@ bool chip8::cycle() {
 
 		case 0x6000: //LD Vx, byte
 		{
-			char x = (opcode & 0x0F00) >> 8;
-			char kk = opcode & 0x00FF;
 			std::cout << " - Set V[" << (int)x << "] = " << (hexString)(kk) << std::endl;
 			V[x] = kk;
 			pc += 2;
@@ -136,8 +144,6 @@ bool chip8::cycle() {
 
 		case 0x7000: //ADD Vx, byte
 		{
-			char x = (opcode & 0x0F00) >> 8;
-			char kk = opcode & 0x00FF;
 			std::cout << " - Set " << (int)V[x] << " + " << (int)kk << " = " << ((int)V[x] + (int)kk) << std::endl;
 			V[x] += kk;
 			pc += 2;
@@ -146,17 +152,14 @@ bool chip8::cycle() {
 
 		case 0xA000: //LD I, addr
 		{
-			short nn = opcode & 0x0FFF;
-			std::cout << " - Set I = " << (hexString)(nn) << std::endl;
-			I = nn;
+			std::cout << " - Set I = " << (hexString)(short(opcode & 0x0FFF)) << std::endl;
+			I = short(opcode & 0x0FFF);
 			pc += 2;
 		}
 		break;
 
 		case 0xC000:
 		{
-			char x = (opcode & 0x0F00) >> 8;
-			char kk = (opcode & 0x00FF);
 			int random = rand() % 255;
 			std::cout << " - Set V[" << (int)x << "] to random number " << (int)((kk) & random) << std::endl;
 			V[x] = kk & random;
@@ -166,12 +169,9 @@ bool chip8::cycle() {
 
 		case 0xD000: //DRW Vx, Vy, nibble
 		{
-			char x = V[((opcode & 0x0F00) >> 8)];
-			char y = V[((opcode & 0x00F0) >> 4)];
-			char n = (opcode & 0x000F);
 			char line = 0;
 
-			std::cout << " - Draw at (" << (int)V[x] << ", " << (int)V[y] << ")." << std::endl;
+			std::cout << " - Draw at (" << (int)V[V[x]] << ", " << (int)V[V[y]] << ")." << std::endl;
 
 			V[0xF] = 0;
 
@@ -182,11 +182,11 @@ bool chip8::cycle() {
 
 					if (((line & (0x80 >> j)) != 0)) {
 
-						if (screen[y + i][x + j] == 1) {
+						if (screen[V[y] + i][V[x] + j] == 1) {
 							V[0xF] = 1;
 						}
 
-					screen[y + i][x + j] ^= 1;
+					screen[V[y] + i][V[x] + j] ^= 1;
 					}
 				}
 			}
