@@ -19,6 +19,8 @@ public:
 	const unsigned short start = 0x200;
 	unsigned short screen[32][64];
 
+	bool drawFlag;
+
 private:
 	int opcode;
 	unsigned char instruction;
@@ -29,5 +31,11 @@ private:
 	unsigned short pc;
 	unsigned short stack[16];
 	unsigned short stackPointer;
+
+	char x;
+	char y;
+	char kk;
+	char nnn;
+	char n;
 };
 

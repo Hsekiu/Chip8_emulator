@@ -53,15 +53,15 @@ bool chip8::cycle() {
 	std::cout << "Opcode is: " << (hexString)(opcode & 0xFFFF) << std::endl;
 
 	//A 4-bit value, the lower 4 bits of the high byte of the instruction
-	char x = (opcode & 0x0F00) >> 8;
+	x = (opcode & 0x0F00) >> 8;
 	//A 4-bit value, the upper 4 bits of the low byte of the instruction
-	char y = (opcode & 0x00F0) >> 4;
+	y = (opcode & 0x00F0) >> 4;
 	//An 8-bit value, the lowest 8 bits of the instruction
-	char kk = opcode & 0x00FF; //byte
+	kk = opcode & 0x00FF; //byte
 	//A 12-bit value, the lowest 12 bits of the instruction
-	char nnn = opcode & 0x0FFF; //addr
+	nnn = opcode & 0x0FFF; //addr
 	//A 4-bit value, the lowest 4 bits of the instruction
-	char n = (opcode & 0x000F); //nibble
+	n = (opcode & 0x000F); //nibble
 	
 	switch (opcode & 0xF000) {
 		case 0x0000: //SYS addr
@@ -190,6 +190,8 @@ bool chip8::cycle() {
 					}
 				}
 			}
+
+			drawFlag = true;
 
 			pc += 2;
 		}

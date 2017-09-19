@@ -63,7 +63,10 @@ void emulationLoop() {
 			chip.cycle();
 		}
 
-		drawScreen();
+		if (chip.drawFlag == true) {
+			drawScreen();
+			chip.drawFlag = false;
+		}
 	}
 }
 
