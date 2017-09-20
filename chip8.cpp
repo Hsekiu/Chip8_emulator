@@ -25,7 +25,7 @@ std::string chip8::hexString(int a)
 }
 
 void chip8::init() {
-	pc = 0x000;
+	pc = start;
 	opcode = 0;
 
 	memset(memory, 0, sizeof memory);
@@ -43,12 +43,11 @@ bool chip8::loadGame(std::string game) {
 	file.read((char*)&memory[start], size);
 
 	return true;
-
 }
 
 bool chip8::cycle() {
-
-	opcode = (memory[pc + start] << 8) + memory[pc + start + 1];
+	std::cout << pc << std::endl;
+	opcode = (memory[pc] << 8) + memory[pc + 1];
 
 	std::cout << "Opcode is: " << (hexString)(opcode & 0xFFFF) << std::endl;
 
@@ -92,8 +91,8 @@ bool chip8::cycle() {
 
 		case 0x1000: //JP addr
 		{
-			std::cout << " - Jump to address " << (hexString)(nnn) << std::endl;
-			pc = nnn;
+			std::cout << " - Jump to address " << (hexString)(start + nnn) << std::endl;
+			pc = start + nnn;
 		}
 		break;
 
@@ -102,13 +101,13 @@ bool chip8::cycle() {
 			std::cout << " - CALL addr called" << std::endl;
 			stack[stackPointer] = pc;
 			stackPointer++;
-			pc = opcode & 0x0FFF;
+			pc = start + (opcode & 0x0FFF);
 		}
 		break;
 
 		case 0x3000: //SE Vx, byte
 		{
-			std::cout << " - SE Vx, byte called" << std::endl;
+			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(nnn) << std::endl;
 			if ((V[x]) == nnn) {
 				pc += 2;
 			}
@@ -118,7 +117,7 @@ bool chip8::cycle() {
 
 		case 0x4000: //SNE Vx, byte
 		{
-			std::cout << " - SNE Vx, byte" << std::endl;
+			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << (hexString)(nnn) << std::endl;
 			if ((V[x]) != nnn) {
 				pc += 2;
 			}
@@ -127,7 +126,7 @@ bool chip8::cycle() {
 
 		case 0x5000: //SE Vx, Vy
 		{
-			std::cout << " - SE Vx, Vy" << std::endl;
+			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(y) << std::endl;
 			if ((V[x]) == y) {
 				pc += 2;
 			}
@@ -196,7 +195,6 @@ bool chip8::cycle() {
 			pc += 2;
 		}
 		break;
-
 
 		default:
 			std::cout << " - Opcode not implemented" << std::endl;

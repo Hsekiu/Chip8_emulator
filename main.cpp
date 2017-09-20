@@ -47,19 +47,21 @@ int main(int argc, char** argv) {
 
 	step = false;
 
-	emulationLoop();
+	if (initializeChip("Maze [David Winter, 199x]") == true) {
+		emulationLoop();
+	} else {
+		std::cout << "Error loading game." << std::endl;
+	}
 
 	return 0;
 }
 
 bool initializeChip(string game) {
-	chip.loadGame(game);
-	return 1;
+	chip.init();
+	return chip.loadGame(game);;
 }
 
 void emulationLoop() {
-	chip.init();
-	chip.loadGame("Maze [David Winter, 199x]");
 
 	while (_emulationState != EmulationState::STOP) {
 		processInput();
