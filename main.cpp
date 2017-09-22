@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 
 	step = false;
 
-	if (initializeChip("Maze [David Winter, 199x]") == true) {
+	if (initializeChip("Zero Demo [zeroZshadow, 2007]") == true) {
 		emulationLoop();
 	} else {
 		std::cout << "Error loading game." << std::endl;

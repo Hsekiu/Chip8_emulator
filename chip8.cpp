@@ -149,6 +149,108 @@ bool chip8::cycle() {
 		}
 		break;
 
+		case 0x8000:
+		{
+			switch (opcode & 0x000F) {
+
+			case 0x0000: //LD Vx, Vy
+			{
+				std::cout << " - Set V[x] = " << "V[" << (int)y << "]" << std::endl;
+				V[x] = V[y];
+				pc += 2;
+			}
+			break;
+
+			case 0x0001: //OR Vx, Vy
+			{
+				std::cout << " - Set V[x] |= " << "V[" << (int)y << "]" << std::endl;
+				V[x] |= V[y];
+				pc += 2;
+			}
+			break;
+
+			case 0x0002: //AND Vx, Vy
+			{
+				std::cout << " - Set V[x] &= " << "V[" << (int)y << "]" << std::endl;
+				V[x] &= V[y];
+				pc += 2;
+			}
+			break;
+
+			case 0x0003: //XOR Vx, Vy
+			{
+				std::cout << " - Set V[x] ^= " << "V[" << (int)y << "]" << std::endl;
+				V[x] ^= V[y];
+				pc += 2;
+			}
+			break;
+
+			case 0x0004: //ADD Vx, Vy
+			{
+				std::cout << " - Set V[x] += " << "V[" << (int)y << "]" << std::endl;
+				V[x] += V[y];
+
+				if (((int)V[x] + (int)V[y]) > 255) {
+					V[0xF] = 1;
+				}
+				else {
+					V[0xF] = 0;
+				}
+
+				pc += 2;
+			}
+			break;
+
+			case 0x0005: //SUB Vx, Vy
+			{
+				std::cout << " - Set V[x] -= " << "V[" << (int)y << "]" << std::endl;
+				V[x] -= V[y];
+
+				if (V[y] > V[x]) {
+					V[0xF] = 1;
+				} else {
+					V[0xF] = 0;
+				}
+
+				pc += 2;
+			}
+			break;
+
+			case 0x0006: //SHR Vx {, Vy}
+			{
+				pc += 2;
+			}
+			break;
+
+			case 0x0007: //SUBN Vx, Vy
+			{
+				pc += 2;
+			}
+			break;
+
+			case 0x000E: //SHL Vx {, Vy}
+			{
+				pc += 2;
+			}
+			break;
+
+			default:
+				std::cout << " - Opcode not implemented in 0x8000" << std::endl;
+				pc += 2;
+			}
+		}
+		break;
+
+		case 0x900: //SNE Vx, Vy
+		{
+			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << "V[" << (int)y << "]" << std::endl;
+			if (V[x] != V[y]) {
+				pc += 2;
+			}
+			pc += 2;
+		}
+		break;
+
 		case 0xA000: //Annn - LD I, addr
 		{
 			std::cout << " - Set I = " << (hexString)(short(opcode & 0x0FFF)) << std::endl;
