@@ -67,7 +67,7 @@ bool chip8::cycle() {
 		{
 			switch (opcode & 0x00FF) {
 
-				case 0x00E0: //CLS
+				case 0x00E0: //00E0 - CLS
 				{
 					std::cout << " - Clear the display." << std::endl;
 					memset(screen, 0, sizeof screen);
@@ -75,9 +75,9 @@ bool chip8::cycle() {
 				}
 				break;
 
-				case 0x00EE: //RET
+				case 0x00EE: //00EE - RET
 				{
-					std::cout << " - RET called" << std::endl;
+					std::cout << " - Return from a subroutine" << std::endl;
 					pc += 2;
 				}
 				break;
@@ -89,23 +89,23 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0x1000: //JP addr
+		case 0x1000: //1nnn - JP addr
 		{
 			std::cout << " - Jump to address " << (hexString)(start + nnn) << std::endl;
 			pc = start + nnn;
 		}
 		break;
 
-		case 0x2000: //CALL addr
+		case 0x2000: //2nnn - CALL addr
 		{
-			std::cout << " - CALL addr called" << std::endl;
+			std::cout << " - Call subroutine at " << (hexString)(nnn) << std::endl;
 			stack[stackPointer] = pc;
 			stackPointer++;
 			pc = start + (opcode & 0x0FFF);
 		}
 		break;
 
-		case 0x3000: //SE Vx, byte
+		case 0x3000: //3xkk - SE Vx, byte
 		{
 			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(nnn) << std::endl;
 			if ((V[x]) == nnn) {
@@ -115,7 +115,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0x4000: //SNE Vx, byte
+		case 0x4000: //4xkk - SNE Vx, byte
 		{
 			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << (hexString)(nnn) << std::endl;
 			if ((V[x]) != nnn) {
@@ -133,7 +133,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0x6000: //LD Vx, byte
+		case 0x6000: //6xkk - LD Vx, byte
 		{
 			std::cout << " - Set V[" << (int)x << "] = " << (hexString)(kk) << std::endl;
 			V[x] = kk;
@@ -141,7 +141,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0x7000: //ADD Vx, byte
+		case 0x7000: //7xkk - ADD Vx, byte
 		{
 			std::cout << " - Set " << (int)V[x] << " + " << (int)kk << " = " << ((int)V[x] + (int)kk) << std::endl;
 			V[x] += kk;
@@ -149,7 +149,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0xA000: //LD I, addr
+		case 0xA000: //Annn - LD I, addr
 		{
 			std::cout << " - Set I = " << (hexString)(short(opcode & 0x0FFF)) << std::endl;
 			I = short(opcode & 0x0FFF);
@@ -157,7 +157,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0xC000:
+		case 0xC000: //Cxkk - RND Vx, byte
 		{
 			int random = rand() % 255;
 			std::cout << " - Set V[" << (int)x << "] to random number " << (int)((kk) & random) << std::endl;
@@ -166,7 +166,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0xD000: //DRW Vx, Vy, nibble
+		case 0xD000: //Dxyn - DRW Vx, Vy, nibble
 		{
 			char line = 0;
 
