@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <bitset>
+
 using namespace std;
 
 const int DISPLAY_WIDTH = 640;
@@ -26,6 +27,9 @@ char* title = "Chip8 emulator by Petr Krakora";
 chip8 chip;
 
 bool step;
+bool notClosed();
+
+string gameName = "Zero Demo [zeroZshadow, 2007]";
 
 //Forward declarations
 void emulationLoop();
@@ -47,10 +51,16 @@ int main(int argc, char** argv) {
 
 	step = false;
 
-	if (initializeChip("Zero Demo [zeroZshadow, 2007]") == true) {
-		emulationLoop();
-	} else {
-		std::cout << "Error loading game." << std::endl;
+	while (_emulationState != EmulationState::STOP) {
+
+		if (initializeChip(gameName) == true) {
+			emulationLoop();
+		}
+		else {
+			//Temporary error code
+			std::cout << "Error loading game." << std::endl;
+			Sleep(2000);
+		}
 	}
 
 	return 0;

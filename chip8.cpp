@@ -38,11 +38,16 @@ void chip8::init() {
 bool chip8::loadGame(std::string game) {
 	 
 	std::ifstream file(game, std::ios::in | std::ios::binary | std::ios::ate);
-	std::streampos size = file.tellg();
-	file.seekg(0, std::ios::beg);
-	file.read((char*)&memory[start], size);
 
-	return true;
+	if (file.is_open()) {
+		std::streampos size = file.tellg();
+		file.seekg(0, std::ios::beg);
+		file.read((char*)&memory[start], size);
+
+		return true;
+	}
+
+	return false;
 }
 
 bool chip8::cycle() {
