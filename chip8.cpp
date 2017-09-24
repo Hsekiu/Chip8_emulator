@@ -223,18 +223,42 @@ bool chip8::cycle() {
 
 			case 0x0006: //SHR Vx {, Vy}
 			{
+				if ((V[x] >> 1) == 1) {
+					V[0xF] = 1;
+				} else {
+					V[0xF] = 0;
+				}
+
+				V[x] /= 2;
+
 				pc += 2;
 			}
 			break;
 
 			case 0x0007: //SUBN Vx, Vy
 			{
+				if (V[y] > V[x]) {
+					V[0xF] = 1;
+				} else {
+					V[0xF] = 0;
+				}
+
+				V[x] -= V[y];
+
 				pc += 2;
 			}
 			break;
 
 			case 0x000E: //SHL Vx {, Vy}
 			{
+				if ((V[x] << 1)  == 1) {
+					V[0xF] = 1;
+				} else {
+					V[0xF] = 0;
+				}
+
+				V[x] *= 2;
+
 				pc += 2;
 			}
 			break;
