@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <bitset>
+#include<algorithm>
 
 using namespace std;
 
@@ -29,7 +30,10 @@ chip8 chip;
 bool step;
 bool notClosed();
 
-string gameName = "Zero Demo [zeroZshadow, 2007]";
+string gameName;
+char* fileDir;
+
+SDL_Event event;
 
 //Forward declarations
 void emulationLoop();
@@ -37,6 +41,8 @@ bool initializeChip(string game);
 bool initializeSDL();
 void processInput();
 void drawScreen();
+bool getFile();
+void processDir(string fileDir);
 
 int main(int argc, char** argv) {
 
@@ -57,9 +63,10 @@ int main(int argc, char** argv) {
 			emulationLoop();
 		}
 		else {
-			//Temporary error code
-			std::cout << "Error loading game." << std::endl;
-			Sleep(2000);
+			if (getFile()) {
+				chip.loadGame(gameName);
+				_emulationState = EmulationState::START;
+			}
 		}
 	}
 
@@ -88,6 +95,38 @@ void emulationLoop() {
 	}
 }
 
+bool getFile() {
+
+	if (SDL_PollEvent(&event)) {
+
+		if (event.type == SDL_DROPFILE) {
+
+			fileDir = event.drop.file;
+			processDir(fileDir);
+			SDL_free(fileDir);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+void processDir(string dir) {
+	string temp = string(fileDir);
+	std::reverse(temp.begin(), temp.end());
+	int sizePos = temp.find("\\");
+
+	if (sizePos >= 0) {
+		temp = temp.substr(0, sizePos);
+		std::reverse(temp.begin(), temp.end());
+		gameName = temp;
+		std::cout << gameName << std::endl;
+		temp = "";
+	} else {
+		std::cout << "Error Reading File" << std::endl;
+	}
+}
+
 bool initializeSDL() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL);
@@ -100,6 +139,7 @@ bool initializeSDL() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	//Set screen to black (red, green, blue, alpha)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 	return true;
 }
 
