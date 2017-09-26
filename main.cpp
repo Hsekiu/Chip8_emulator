@@ -7,7 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <bitset>
-#include<algorithm>
+#include <algorithm>
 
 using namespace std;
 
@@ -42,7 +42,6 @@ bool initializeSDL();
 void processInput();
 void drawScreen();
 bool getFile();
-void processDir(string fileDir);
 
 int main(int argc, char** argv) {
 
@@ -102,29 +101,13 @@ bool getFile() {
 		if (event.type == SDL_DROPFILE) {
 
 			fileDir = event.drop.file;
-			processDir(fileDir);
+			gameName = string(fileDir);
 			SDL_free(fileDir);
 
 			return true;
 		}
 	}
 	return false;
-}
-
-void processDir(string dir) {
-	string temp = string(fileDir);
-	std::reverse(temp.begin(), temp.end());
-	int sizePos = temp.find("\\");
-
-	if (sizePos >= 0) {
-		temp = temp.substr(0, sizePos);
-		std::reverse(temp.begin(), temp.end());
-		gameName = temp;
-		std::cout << gameName << std::endl;
-		temp = "";
-	} else {
-		std::cout << "Error Reading File" << std::endl;
-	}
 }
 
 bool initializeSDL() {
