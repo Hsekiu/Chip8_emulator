@@ -36,7 +36,6 @@ void chip8::init() {
 }
 
 bool chip8::loadGame(std::string game) {
-	 
 	std::ifstream file(game, std::ios::in | std::ios::binary | std::ios::ate);
 
 	if (file.is_open()) {
@@ -51,7 +50,6 @@ bool chip8::loadGame(std::string game) {
 }
 
 bool chip8::cycle() {
-	std::cout << pc << std::endl;
 	opcode = (memory[pc] << 8) + memory[pc + 1];
 
 	std::cout << "Opcode is: " << (hexString)(opcode & 0xFFFF) << std::endl;
@@ -288,6 +286,12 @@ bool chip8::cycle() {
 		}
 		break;
 
+		case 0XB000: //JP V0, addr
+		{
+			std::cout << " - Jump to location " << ((int)(nnn) + V[0]) << std::endl;
+			pc = nnn + V[0];
+		}
+
 		case 0xC000: //Cxkk - RND Vx, byte
 		{
 			int random = rand() % 255;
@@ -324,6 +328,29 @@ bool chip8::cycle() {
 			drawFlag = true;
 
 			pc += 2;
+		}
+		break;
+
+		case 0xE000:
+		{
+			switch (opcode & 0x000F) {
+
+			case 0x0000E: //SKP V
+			{
+				pc += 2;
+			}
+			break;
+
+			case 0x00001: //SKNP Vx
+			{
+				pc += 2;
+			}
+			break;
+
+			default:
+				std::cout << " - Opcode not implemented in 0xE000" << std::endl;
+				pc += 2;
+			}
 		}
 		break;
 

@@ -18,7 +18,10 @@ float ys = 0;
 float heights;
 float widths;
 
-enum class EmulationState { START, PAUSE, STOP };
+// START starts the emulator and PAUSE pauses it.
+// STOP handles program and emulator end states.
+// FINISH resets the emulator.
+enum class EmulationState { START, PAUSE, STOP, FINISH };
 EmulationState _emulationState;
 
 SDL_Window *_window;
@@ -42,32 +45,23 @@ bool initializeSDL();
 void processInput();
 void drawScreen();
 bool getFile();
+void mainLoop();
 
 int main(int argc, char** argv) {
 
 	initializeSDL();
 
 	_emulationState = EmulationState::PAUSE;
-	//std::cout << "Argument 1 is: " << argv[1] << std::endl;
-	//initializeChip(argv[1]);
 
+	//Set up "pixel" dimensions.
 	widths = 1.0 / 64;
 	heights = 1.0 / 32;
 
+	//Emulation instruction stepping
 	step = false;
 
-	while (_emulationState != EmulationState::STOP) {
-
-		if (initializeChip(gameName) == true) {
-			emulationLoop();
-		}
-		else {
-			if (getFile()) {
-				chip.loadGame(gameName);
-				_emulationState = EmulationState::START;
-			}
-		}
-	}
+	//Main loop of program.
+	mainLoop();
 
 	return 0;
 }
@@ -77,16 +71,45 @@ bool initializeChip(string game) {
 	return chip.loadGame(game);;
 }
 
+void mainLoop() {
+	while (_emulationState != EmulationState::STOP) {
+
+		if (initializeChip(gameName) == true) {
+			emulationLoop();
+		} else {
+			if (getFile()) {
+				if (chip.loadGame(gameName)) {
+					_emulationState = EmulationState::START;
+					std::cout << "Loaded " << gameName << std::endl;
+				} else {
+					std::cout << "Could not read Rom file." << std::endl;
+				}
+			}
+		}
+	}
+}
+
+//Emulation of CPU loop.
 void emulationLoop() {
 
-	while (_emulationState != EmulationState::STOP) {
+	while (_emulationState != EmulationState::STOP || _emulationState == EmulationState::FINISH) {
 		processInput();
 
+		//Reloading game.
+		if (_emulationState == EmulationState::FINISH) {
+			initializeChip(gameName);
+			memset(chip.screen, 0, sizeof chip.screen);
+			drawScreen();
+			_emulationState = EmulationState::PAUSE;
+		}
+
+		//Stepping of Emulation.
 		if (_emulationState != EmulationState::PAUSE || step == true) {
 			chip.cycle();
 			step = false;
 		}
 
+		//If dragflag then screen is updated and drawn.
 		if (chip.drawFlag == true) {
 			drawScreen();
 			chip.drawFlag = false;
@@ -110,6 +133,7 @@ bool getFile() {
 	return false;
 }
 
+//Boilerplate SDL setup.
 bool initializeSDL() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL);
@@ -239,6 +263,10 @@ void processInput() {
 			case SDLK_LEFT:
 				//cout << "Pressed Left Arrow" << endl;
 				step = true;
+				break;
+			case SDLK_r:
+				cout << "Reloading game" << endl;
+				_emulationState = EmulationState::FINISH;
 				break;
 			}
 		}
