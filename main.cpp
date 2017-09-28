@@ -23,7 +23,7 @@ float widths;
 // FINISH resets the emulator.
 enum class EmulationState { START, PAUSE, STOP, FINISH };
 EmulationState _emulationState;
-
+ 
 SDL_Window *_window;
 SDL_GLContext glContext;
 

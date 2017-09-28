@@ -94,17 +94,17 @@ bool chip8::cycle() {
 
 		case 0x1000: //1nnn - JP addr
 		{
-			std::cout << " - Jump to address " << (hexString)(start + nnn) << std::endl;
-			pc = start + nnn;
+			std::cout << " - Jump to address " << (hexString)(start + nnn + 0x100) << std::endl;
+			pc = start + nnn + 0x100;
 		}
 		break;
 
 		case 0x2000: //2nnn - CALL addr
 		{
-			std::cout << " - Call subroutine at " << (hexString)(nnn) << std::endl;
+			std::cout << " - Call subroutine at " << (hexString)(start + nnn + 0x100) << std::endl;
 			stack[stackPointer] = pc;
 			stackPointer++;
-			pc = start + (opcode & 0x0FFF);
+			pc = start + nnn + 0x100;
 		}
 		break;
 
@@ -331,24 +331,22 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0xE000:
+		case 0xF000:
 		{
-			switch (opcode & 0x000F) {
+			switch (opcode & 0x00FF) {
 
-			case 0x0000E: //SKP V
-			{
-				pc += 2;
-			}
 			break;
 
-			case 0x00001: //SKNP Vx
+			case 0x001E: //Fx1E - ADD I, Vx
 			{
+				std::cout << " - Set I += V[" << (int)x << "], = " << (int)(I + V[x]) << std::endl;
+				I += V[x];
 				pc += 2;
 			}
 			break;
 
 			default:
-				std::cout << " - Opcode not implemented in 0xE000" << std::endl;
+				std::cout << " - Opcode not implemented in 0xF000" << std::endl;
 				pc += 2;
 			}
 		}
