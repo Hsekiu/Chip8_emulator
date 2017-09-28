@@ -94,24 +94,24 @@ bool chip8::cycle() {
 
 		case 0x1000: //1nnn - JP addr
 		{
-			std::cout << " - Jump to address " << (hexString)(start + nnn + 0x100) << std::endl;
-			pc = start + nnn + 0x100;
+			std::cout << " - Jump to address " << (hexString)(nnn) << std::endl;
+			pc = nnn;
 		}
 		break;
 
 		case 0x2000: //2nnn - CALL addr
 		{
-			std::cout << " - Call subroutine at " << (hexString)(start + nnn + 0x100) << std::endl;
+			std::cout << " - Call subroutine at " << (hexString)(nnn) << std::endl;
 			stack[stackPointer] = pc;
 			stackPointer++;
-			pc = start + nnn + 0x100;
+			pc = nnn;
 		}
 		break;
 
 		case 0x3000: //3xkk - SE Vx, byte
 		{
-			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(nnn) << std::endl;
-			if ((V[x]) == nnn) {
+			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(kk) << std::endl;
+			if ((V[x]) == kk) {
 				pc += 2;
 			}
 			pc += 2;
@@ -335,12 +335,34 @@ bool chip8::cycle() {
 		{
 			switch (opcode & 0x00FF) {
 
-			break;
-
 			case 0x001E: //Fx1E - ADD I, Vx
 			{
 				std::cout << " - Set I += V[" << (int)x << "], = " << (int)(I + V[x]) << std::endl;
 				I += V[x];
+				pc += 2;
+			}
+			break;
+
+			case 0x0055: //Fx55 - LD [I], Vx
+			{
+				std::cout << " - Stored V[0] through V[ " << (int)x << "] in memory starting at location " << (int)I << std::endl;
+
+				for (int i = 0; i < x; i++) {
+					memory[i + i] = V[i];
+				}
+
+				pc += 2;
+			}
+			break;
+
+			case 0x0065: //Fx65 - LD Vx, [I]
+			{
+				std::cout << " - Loaded Registers V[0] through V[ " << (int)x << "] from memory starting at location " << (int)I << std::endl;
+
+				for (int i = 0; i < x; i++) {
+					V[i] = memory[i + i];
+				}
+
 				pc += 2;
 			}
 			break;

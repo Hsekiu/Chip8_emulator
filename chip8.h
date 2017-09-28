@@ -36,7 +36,7 @@ private:
 	char x;
 	char y;
 	char kk;
-	char nnn;
+	short nnn;
 	char n;
 };
 
