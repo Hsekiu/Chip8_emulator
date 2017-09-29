@@ -49,6 +49,26 @@ bool chip8::loadGame(std::string game) {
 	return false;
 }
 
+void chip8::printData() {
+
+	std::cout << std::endl;
+	std::cout << "     V   S   " << std::endl;
+	std::cout << "   _________" << std::endl;
+	for (int i = 0; i < sizeof(V); i++) {
+		if (i <= 9) {
+			std::cout << i << "   " << (hexString)(V[i]) << " | " << (hexString)(stack[i]) << std::endl;
+		} else {
+			std::cout << i << "  " << (hexString)(V[i]) << " | " << (hexString)(stack[i]) << std::endl;
+		}
+	}
+	std::cout << "   _________" << std::endl;
+	std::cout << std::endl;
+	std::cout << "PC " << (hexString)(pc) << std::endl;
+	std::cout << "SP " << (hexString)(stackPointer) << std::endl;
+	std::cout << "I  " << (hexString)(I) << std::endl;
+	std::cout << std::endl;
+}
+
 bool chip8::cycle() {
 	opcode = (memory[pc] << 8) + memory[pc + 1];
 

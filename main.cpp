@@ -268,6 +268,10 @@ void processInput() {
 				cout << "Reloading game" << endl;
 				_emulationState = EmulationState::FINISH;
 				break;
+			case SDLK_UP:
+				cout << "Printing data" << endl;
+				chip.printData();
+				break;
 			}
 		}
 	}

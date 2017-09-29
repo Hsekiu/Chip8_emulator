@@ -19,6 +19,7 @@ public:
 	std::string hexString(int a);
 	const unsigned short start = 0x200;
 	unsigned short screen[32][64];
+	void printData();
 
 	bool drawFlag;
 
