@@ -123,7 +123,7 @@ bool chip8::cycle() {
 		{
 			std::cout << " - Call subroutine at " << (hexString)(nnn) << std::endl;
 			stack[stackPointer] = pc;
-			stackPointer++;
+			++stackPointer;
 			pc = nnn;
 		}
 		break;
@@ -368,7 +368,7 @@ bool chip8::cycle() {
 				std::cout << " - Stored V[0] through V[ " << (int)x << "] in memory starting at location " << (int)I << std::endl;
 
 				for (int i = 0; i < x; i++) {
-					memory[i + i] = V[i];
+					memory[I + i] = V[i];
 				}
 
 				pc += 2;
@@ -380,7 +380,7 @@ bool chip8::cycle() {
 				std::cout << " - Loaded Registers V[0] through V[ " << (int)x << "] from memory starting at location " << (int)I << std::endl;
 
 				for (int i = 0; i < x; i++) {
-					V[i] = memory[i + i];
+					V[i] = memory[I + i];
 				}
 
 				pc += 2;
