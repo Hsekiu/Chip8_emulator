@@ -27,9 +27,13 @@ std::string chip8::hexString(int a)
 void chip8::init() {
 	pc = start;
 	opcode = 0;
+	I = 0;
+	stackPointer = 0;
 
+	//Reset all registers.
 	memset(memory, 0, sizeof memory);
 	memset(stack, 0, sizeof stack);
+	memset(V, 0, sizeof V);
 	memset(screen, 0, sizeof screen);
 
 	srand(time(NULL));
@@ -101,7 +105,8 @@ bool chip8::cycle() {
 				case 0x00EE: //00EE - RET
 				{
 					std::cout << " - Return from a subroutine" << std::endl;
-					pc += 2;
+					stackPointer--;
+					pc = stack[stackPointer];
 				}
 				break;
 
@@ -122,7 +127,7 @@ bool chip8::cycle() {
 		case 0x2000: //2nnn - CALL addr
 		{
 			std::cout << " - Call subroutine at " << (hexString)(nnn) << std::endl;
-			stack[stackPointer] = pc;
+			stack[stackPointer] = pc + 2;
 			++stackPointer;
 			pc = nnn;
 		}
@@ -140,8 +145,8 @@ bool chip8::cycle() {
 
 		case 0x4000: //4xkk - SNE Vx, byte
 		{
-			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << (hexString)(nnn) << std::endl;
-			if ((V[x]) != nnn) {
+			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << (hexString)(kk) << std::endl;
+			if ((V[x]) != kk) {
 				pc += 2;
 			}
 		}
@@ -288,7 +293,7 @@ bool chip8::cycle() {
 		}
 		break;
 
-		case 0x900: //SNE Vx, Vy
+		case 0x9000: //SNE Vx, Vy
 		{
 			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << "V[" << (int)y << "]" << std::endl;
 			if (V[x] != V[y]) {
@@ -367,9 +372,11 @@ bool chip8::cycle() {
 			{
 				std::cout << " - Stored V[0] through V[ " << (int)x << "] in memory starting at location " << (int)I << std::endl;
 
-				for (int i = 0; i < x; i++) {
+				for (int i = 0; i <= x; i++) {
 					memory[I + i] = V[i];
 				}
+
+				I++;
 
 				pc += 2;
 			}
@@ -379,9 +386,11 @@ bool chip8::cycle() {
 			{
 				std::cout << " - Loaded Registers V[0] through V[ " << (int)x << "] from memory starting at location " << (int)I << std::endl;
 
-				for (int i = 0; i < x; i++) {
+				for (int i = 0; i <= x; i++) {
 					V[i] = memory[I + i];
 				}
+
+				I++;
 
 				pc += 2;
 			}
