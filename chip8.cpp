@@ -149,6 +149,7 @@ bool chip8::cycle() {
 			if ((V[x]) != kk) {
 				pc += 2;
 			}
+			pc += 2;
 		}
 		break;
 
@@ -158,6 +159,7 @@ bool chip8::cycle() {
 			if ((V[x]) == y) {
 				pc += 2;
 			}
+			pc += 2;
 		}
 		break;
 
