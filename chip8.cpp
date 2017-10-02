@@ -35,6 +35,7 @@ void chip8::init() {
 	memset(stack, 0, sizeof stack);
 	memset(V, 0, sizeof V);
 	memset(screen, 0, sizeof screen);
+	memset(keys, 0, sizeof(keys));
 
 	srand(time(NULL));
 }
@@ -135,7 +136,7 @@ bool chip8::cycle() {
 
 		case 0x3000: //3xkk - SE Vx, byte
 		{
-			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(kk) << std::endl;
+			std::cout << " - Skip next instruction if V[" << (hexString)(x) << "] = " << (hexString)(kk) << std::endl;
 			if ((V[x]) == kk) {
 				pc += 2;
 			}
@@ -145,7 +146,7 @@ bool chip8::cycle() {
 
 		case 0x4000: //4xkk - SNE Vx, byte
 		{
-			std::cout << " - Skip next instruction if V[" << (int)x << "] != " << (hexString)(kk) << std::endl;
+			std::cout << " - Skip next instruction if V[" << (hexString)(x) << "] != " << (hexString)(kk) << std::endl;
 			if ((V[x]) != kk) {
 				pc += 2;
 			}
@@ -155,7 +156,7 @@ bool chip8::cycle() {
 
 		case 0x5000: //SE Vx, Vy
 		{
-			std::cout << " - Skip next instruction if V[" << (int)x << "] = " << (hexString)(y) << std::endl;
+			std::cout << " - Skip next instruction if V[" << (hexString)(x) << "] = " << (hexString)(y) << std::endl;
 			if ((V[x]) == y) {
 				pc += 2;
 			}
@@ -355,6 +356,39 @@ bool chip8::cycle() {
 			drawFlag = true;
 
 			pc += 2;
+		}
+		break;
+
+		case 0xE000:
+		{
+			switch (opcode & 0x00FF) {
+
+			case 0x009E: //SKP Vx
+			{
+				std::cout << " - Skip next instruction if " << (hexString)(keys[V[x]]) << " == 1." << std::endl;
+				if (keys[V[x]] == 1) {
+					pc += 2;
+				}
+
+				pc += 2;
+			}
+			break;
+
+			case 0x00A1: //SKNP Vx
+			{
+				std::cout << " - Skip next instruction if " << (hexString)(keys[V[x]]) << " != 1." << std::endl;
+				if (keys[V[x]] != 1) {
+					pc += 2;
+				}
+
+				pc += 2;
+			}
+			break;
+
+			default:
+				std::cout << " - Opcode not implemented in 0xE000" << std::endl;
+				pc += 2;
+			}
 		}
 		break;
 

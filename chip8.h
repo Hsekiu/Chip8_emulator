@@ -21,6 +21,8 @@ public:
 	unsigned short screen[32][64];
 	void printData();
 
+	unsigned char keys[16];
+
 	bool drawFlag;
 
 private:

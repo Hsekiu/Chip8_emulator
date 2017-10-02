@@ -226,15 +226,19 @@ void processInput() {
 			switch (evnt.key.keysym.sym) {
 			case SDLK_1:
 				cout << "Pressed 1" << endl;
+				chip.keys[1] == 1;
 				break;
 			case SDLK_2:
 				cout << "Pressed 2" << endl;
+				chip.keys[2] == 1;
 				break;
 			case SDLK_3:
 				cout << "Pressed 3" << endl;
+				chip.keys[3] == 1;
 				break;
 			case SDLK_4:
 				cout << "Pressed 4" << endl;
+				chip.keys[4] == 1;
 				break;
 			case SDLK_SPACE:
 				//cout << "Pressed Space" << endl;
@@ -250,15 +254,19 @@ void processInput() {
 			switch (evnt.key.keysym.sym) {
 			case SDLK_1:
 				cout << "Let go of 1" << endl;
+				chip.keys[1] == 0;
 				break;
 			case SDLK_2:
 				cout << "Let go of 2" << endl;
+				chip.keys[2] == 0;
 				break;
 			case SDLK_3:
 				cout << "Let go of 3" << endl;
+				chip.keys[3] == 0;
 				break;
 			case SDLK_4:
 				cout << "Let go of 4" << endl;
+				chip.keys[4] == 0;
 				break;
 			case SDLK_LEFT:
 				//cout << "Pressed Left Arrow" << endl;
