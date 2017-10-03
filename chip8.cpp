@@ -396,6 +396,19 @@ bool chip8::cycle() {
 		{
 			switch (opcode & 0x00FF) {
 
+			case 0x000A: //LD Vx, K
+			{
+				std::cout << " - Wait for a key press, store the value of the key in V[" << (int)x << "]." << std::endl;
+				for (int i = 0; i < sizeof(keys); i++) {
+					if (keys[i] == 1) {
+						V[x] = (char)i;
+						pc += 2;
+					}
+				}
+
+			}
+			break;
+
 			case 0x001E: //Fx1E - ADD I, Vx
 			{
 				std::cout << " - Set I += V[" << (int)x << "], = " << (int)(I + V[x]) << std::endl;
@@ -411,8 +424,6 @@ bool chip8::cycle() {
 				for (int i = 0; i <= x; i++) {
 					memory[I + i] = V[i];
 				}
-
-				I++;
 
 				pc += 2;
 			}
