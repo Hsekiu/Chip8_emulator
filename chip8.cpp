@@ -73,7 +73,7 @@ void chip8::printData() {
 	std::cout << "I  " << (hexString)(I) << std::endl;
 	std::cout << std::endl;
 
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < sizeof(keys) / sizeof(int); i++) {
 		std::cout << "Key " << i << " is: " << keys[i] << std::endl;
 	}
 }
@@ -403,7 +403,7 @@ bool chip8::cycle() {
 			case 0x000A: //LD Vx, K
 			{
 				std::cout << " - Wait for a key press, store the value of the key in V[" << (int)x << "]." << std::endl;
-				for (unsigned char i = 0; i < 16; i++) {
+				for (int i = 0; i < 16; i++) {
 					if (keys[i] == 1) {
 						V[x] = (char)i;
 						pc += 2;
