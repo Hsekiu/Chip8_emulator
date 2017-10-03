@@ -68,6 +68,7 @@ int main(int argc, char** argv) {
 
 bool initializeChip(string game) {
 	chip.init();
+	chip.keys[1] == 1;
 	return chip.loadGame(game);;
 }
 
@@ -254,7 +255,7 @@ void processInput() {
 			switch (evnt.key.keysym.sym) {
 			case SDLK_1:
 				cout << "Let go of 1" << endl;
-				chip.keys[1] == 0;
+				//chip.keys[1] == 0;
 				break;
 			case SDLK_2:
 				cout << "Let go of 2" << endl;

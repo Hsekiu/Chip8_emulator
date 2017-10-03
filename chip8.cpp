@@ -31,11 +31,11 @@ void chip8::init() {
 	stackPointer = 0;
 
 	//Reset all registers.
-	memset(memory, 0, sizeof memory);
-	memset(stack, 0, sizeof stack);
-	memset(V, 0, sizeof V);
-	memset(screen, 0, sizeof screen);
-	memset(keys, 0, sizeof(keys));
+	memset(memory, 0, sizeof(memory) / sizeof(char));
+	memset(stack, 0, sizeof(stack) / sizeof(short));
+	memset(V, 0, sizeof(V) / sizeof(char));
+	memset(screen, 0, sizeof(screen) / sizeof(short));
+	memset(keys, 0, sizeof(keys) / sizeof(int));
 
 	srand(time(NULL));
 }
@@ -72,6 +72,10 @@ void chip8::printData() {
 	std::cout << "SP " << (hexString)(stackPointer) << std::endl;
 	std::cout << "I  " << (hexString)(I) << std::endl;
 	std::cout << std::endl;
+
+	for (int i = 0; i < 16; i++) {
+		std::cout << "Key " << i << " is: " << keys[i] << std::endl;
+	}
 }
 
 bool chip8::cycle() {
@@ -399,10 +403,11 @@ bool chip8::cycle() {
 			case 0x000A: //LD Vx, K
 			{
 				std::cout << " - Wait for a key press, store the value of the key in V[" << (int)x << "]." << std::endl;
-				for (int i = 0; i < sizeof(keys); i++) {
+				for (unsigned char i = 0; i < 16; i++) {
 					if (keys[i] == 1) {
 						V[x] = (char)i;
 						pc += 2;
+						break;
 					}
 				}
 
@@ -413,6 +418,13 @@ bool chip8::cycle() {
 			{
 				std::cout << " - Set I += V[" << (int)x << "], = " << (int)(I + V[x]) << std::endl;
 				I += V[x];
+				pc += 2;
+			}
+			break;
+
+			case 0x0029: //LD F, Vx
+			{
+				I = V[x] * 5;
 				pc += 2;
 			}
 			break;
