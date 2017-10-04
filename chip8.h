@@ -20,10 +20,12 @@ public:
 	const unsigned short start = 0x200;
 	unsigned short screen[32][64];
 	void printData();
+	void updateTimers();
 
 	unsigned int keys[16];
 
 	bool drawFlag;
+	bool soundFlag;
 
 private:
 	int opcode;
@@ -35,6 +37,9 @@ private:
 	unsigned short pc;
 	unsigned short stack[16];
 	unsigned short stackPointer;
+
+	unsigned short delayTimer;
+	unsigned short soundTimer;
 
 	char x;
 	char y;

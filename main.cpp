@@ -91,7 +91,6 @@ void emulationLoop() {
 		//Reloading game.
 		if (_emulationState == EmulationState::FINISH) {
 			initializeChip(gameName);
-			memset(chip.screen, 0, sizeof chip.screen);
 			drawScreen();
 			_emulationState = EmulationState::PAUSE;
 		}
@@ -281,6 +280,7 @@ void processInput() {
 				break;
 			}
 		}
+		//A game file is dragged into the window.
 		else if (event.type == SDL_DROPFILE) {
 			fileDir = event.drop.file;
 			gameName = string(fileDir);

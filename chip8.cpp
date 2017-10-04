@@ -25,16 +25,25 @@ std::string chip8::hexString(int a)
 }
 
 void chip8::init() {
+	//Reset registers.
 	pc = start;
 	opcode = 0;
 	I = 0;
 	stackPointer = 0;
 
-	//Reset all registers.
+	//Reset timers.
+	delayTimer = 0;
+	soundTimer = 0;
+
+	//Init flags.
+	soundFlag = false;
+	drawFlag = false;
+
+	//Reset array registers.
 	memset(memory, 0, sizeof(memory) / sizeof(char));
 	memset(stack, 0, sizeof(stack) / sizeof(short));
 	memset(V, 0, sizeof(V) / sizeof(char));
-	memset(screen, 0, sizeof(screen) / sizeof(short));
+	memset(screen, 0, sizeof screen);
 	memset(keys, 0, sizeof(keys) / sizeof(int));
 
 	srand(time(NULL));
@@ -52,6 +61,19 @@ bool chip8::loadGame(std::string game) {
 	}
 
 	return false;
+}
+
+void chip8::updateTimers() {
+
+	if (delayTimer > 0) {
+		delayTimer--;
+	}
+
+	if (soundTimer > 0) {
+		soundTimer--;
+		//Play sound.
+		soundFlag = true;
+	}
 }
 
 void chip8::printData() {
@@ -400,6 +422,14 @@ bool chip8::cycle() {
 		{
 			switch (opcode & 0x00FF) {
 
+			case 0x0007:
+			{
+				std::cout << " - Set " << "V[" << (int)x << "] to Delay timer = " << delayTimer << std::endl;
+				V[x] = (char)(delayTimer);
+				pc += 2;
+			}
+			break;
+
 			case 0x000A: //LD Vx, K
 			{
 				std::cout << " - Wait for a key press, store the value of the key in V[" << (int)x << "]." << std::endl;
@@ -411,6 +441,22 @@ bool chip8::cycle() {
 					}
 				}
 
+			}
+			break;
+
+			case 0x0015: //LD DT, Vx
+			{
+				std::cout << " - Set delay timer = " << "V[" << (int)x << "]." << std::endl;
+				delayTimer = V[x];
+				pc += 2;
+			}
+			break;
+
+			case 0x0018: //LD ST, Vx
+			{
+				std::cout << " - Set sound timer = " << "V[" << (int)x << "]." << std::endl;
+				soundTimer = V[x];
+				pc += 2;
 			}
 			break;
 
@@ -465,6 +511,8 @@ bool chip8::cycle() {
 		default:
 			std::cout << " - Opcode not implemented" << std::endl;
 	}
+
+	updateTimers();
 
 	return true;
 }
