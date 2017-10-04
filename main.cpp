@@ -31,12 +31,10 @@ char* title = "Chip8 emulator by Petr Krakora";
 chip8 chip;
 
 bool step;
-bool notClosed();
+bool newGameLoaded;
 
 string gameName;
 char* fileDir;
-
-SDL_Event event;
 
 //Forward declarations
 void emulationLoop();
@@ -44,8 +42,8 @@ bool initializeChip(string game);
 bool initializeSDL();
 void processInput();
 void drawScreen();
-bool getFile();
 void mainLoop();
+bool loadGame();
 
 int main(int argc, char** argv) {
 
@@ -59,6 +57,8 @@ int main(int argc, char** argv) {
 
 	//Emulation instruction stepping
 	step = false;
+	
+	newGameLoaded = false;
 
 	//Main loop of program.
 	mainLoop();
@@ -68,23 +68,17 @@ int main(int argc, char** argv) {
 
 bool initializeChip(string game) {
 	chip.init();
-	return chip.loadGame(game);;
+	return chip.loadGame(game);
 }
 
 void mainLoop() {
 	while (_emulationState != EmulationState::STOP) {
 
-		if (initializeChip(gameName) == true) {
+		if (newGameLoaded) {
+			loadGame();
 			emulationLoop();
 		} else {
-			if (getFile()) {
-				if (chip.loadGame(gameName)) {
-					_emulationState = EmulationState::START;
-					std::cout << "Loaded " << gameName << std::endl;
-				} else {
-					std::cout << "Could not read Rom file." << std::endl;
-				}
-			}
+			processInput();
 		}
 	}
 }
@@ -93,7 +87,6 @@ void mainLoop() {
 void emulationLoop() {
 
 	while (_emulationState != EmulationState::STOP || _emulationState == EmulationState::FINISH) {
-		processInput();
 
 		//Reloading game.
 		if (_emulationState == EmulationState::FINISH) {
@@ -109,6 +102,13 @@ void emulationLoop() {
 			step = false;
 		}
 
+		processInput();
+
+		//New game Loaded.
+		if (newGameLoaded) {
+			loadGame();
+		}
+
 		//If dragflag then screen is updated and drawn.
 		if (chip.drawFlag == true) {
 			drawScreen();
@@ -117,19 +117,20 @@ void emulationLoop() {
 	}
 }
 
-bool getFile() {
+bool loadGame() {
+	newGameLoaded = false;
 
-	if (SDL_PollEvent(&event)) {
-
-		if (event.type == SDL_DROPFILE) {
-
-			fileDir = event.drop.file;
-			gameName = string(fileDir);
-			SDL_free(fileDir);
-
-			return true;
-		}
+	if (chip.loadGame(gameName)) {
+		_emulationState = EmulationState::START;
+		initializeChip(gameName);
+		std::cout << "Loaded " << gameName << std::endl;
+		return true;
 	}
+	else {
+		std::cout << "Could not read Rom file." << std::endl;
+		return false;
+	}
+
 	return false;
 }
 
@@ -216,14 +217,14 @@ void drawScreen() {
 }
 
 void processInput() {
-	SDL_Event evnt;
+	SDL_Event event;
 
-	while (SDL_PollEvent(&evnt) != 0) {
-		if (evnt.type == SDL_QUIT) {
+	while (SDL_PollEvent(&event) != 0) {
+		if (event.type == SDL_QUIT) {
 			_emulationState = EmulationState::STOP;
 		}
-		else if (evnt.type == SDL_KEYDOWN) {
-			switch (evnt.key.keysym.sym) {
+		else if (event.type == SDL_KEYDOWN) {
+			switch (event.key.keysym.sym) {
 			case SDLK_1:
 				cout << "Pressed 1" << endl;
 				chip.keys[1] = 1;
@@ -241,7 +242,6 @@ void processInput() {
 				chip.keys[4] = 1;
 				break;
 			case SDLK_SPACE:
-				//cout << "Pressed Space" << endl;
 				if (_emulationState == EmulationState::PAUSE) {
 					_emulationState = EmulationState::START;
 				}
@@ -250,8 +250,8 @@ void processInput() {
 				}
 			}
 		}
-		else if (evnt.type == SDL_KEYUP) {
-			switch (evnt.key.keysym.sym) {
+		else if (event.type == SDL_KEYUP) {
+			switch (event.key.keysym.sym) {
 			case SDLK_1:
 				cout << "Let go of 1" << endl;
 				chip.keys[1] = 0;
@@ -269,7 +269,6 @@ void processInput() {
 				chip.keys[4] = 0;
 				break;
 			case SDLK_LEFT:
-				//cout << "Pressed Left Arrow" << endl;
 				step = true;
 				break;
 			case SDLK_r:
@@ -281,6 +280,12 @@ void processInput() {
 				chip.printData();
 				break;
 			}
+		}
+		else if (event.type == SDL_DROPFILE) {
+			fileDir = event.drop.file;
+			gameName = string(fileDir);
+			SDL_free(fileDir);
+			newGameLoaded = true;
 		}
 	}
 }
