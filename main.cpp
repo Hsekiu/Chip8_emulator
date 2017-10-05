@@ -2,6 +2,8 @@
 
 #include <SDL/SDL.h>
 #include <GL/glew.h>
+#include <SDL_mixer\SDL_mixer.h>
+
 #include "chip8.h"
 
 #include <sstream>
@@ -36,6 +38,8 @@ bool newGameLoaded;
 string gameName;
 char* fileDir;
 
+Mix_Chunk *beep;
+
 //Forward declarations
 void emulationLoop();
 bool initializeChip(string game);
@@ -44,10 +48,16 @@ void processInput();
 void drawScreen();
 void mainLoop();
 bool loadGame();
+bool loadAssets();
 
 int main(int argc, char** argv) {
 
 	initializeSDL();
+
+	beep = NULL;
+
+	//Load music.
+	loadAssets();
 
 	_emulationState = EmulationState::PAUSE;
 
@@ -113,6 +123,12 @@ void emulationLoop() {
 			drawScreen();
 			chip.drawFlag = false;
 		}
+
+		//If soundflag is set then play SFX.
+		if (chip.soundFlag) {
+			Mix_PlayChannel(-1, beep, 0);
+			chip.soundFlag = false;
+		}
 	}
 }
 
@@ -139,7 +155,7 @@ bool initializeSDL() {
 	//Initialize all of SDL's subsystems.
 	//Doesnt Init everything so ignore.
 	if (SDL_Init(SDL_INIT_EVERYTHING)) {
-		cout << "Couldnt init SDL" << endl;
+		cout << "Couldnt init SDL!" << endl;
 		return false;
 	}
 
@@ -147,7 +163,7 @@ bool initializeSDL() {
 
 	//Check if there is no error with screen setup.
 	if (_window == NULL) {
-		cout << "Couldnt create Window" << endl;
+		cout << "Couldnt create Window!" << endl;
 		return false;
 	}
 
@@ -161,12 +177,34 @@ bool initializeSDL() {
 		return false;
 	}
 
+	//Initialize SDL_mixer 
+	if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) { 
+		cout << "Couldnt Initialize SDL_mixer: " << Mix_GetError() << endl;
+		return false; 
+	}
+
 	//Create a double buffered window to prevent artifacts
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	//Set screen to black (red, green, blue, alpha)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
+	return true;
+}
+
+bool loadAssets() {
+	//Load the music 
+	beep = Mix_LoadWAV("tone_beep.wav");
+
+	//Lower volume to 10 out of 0 to 128.
+	Mix_VolumeChunk(beep, 10);
+
+	//Check if problem loading SFX.
+	if (beep == NULL) {
+		cout << "Problem loading SFX: " << Mix_GetError() << endl;
+		return false;
+	}
 
 	return true;
 }
