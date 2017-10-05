@@ -135,18 +135,39 @@ bool loadGame() {
 
 //Boilerplate SDL setup.
 bool initializeSDL() {
-	SDL_Init(SDL_INIT_EVERYTHING);
+
+	//Initialize all of SDL's subsystems.
+	//Doesnt Init everything so ignore.
+	if (SDL_Init(SDL_INIT_EVERYTHING)) {
+		cout << "Couldnt init SDL" << endl;
+		return false;
+	}
+
 	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL);
+
+	//Check if there is no error with screen setup.
+	if (_window == NULL) {
+		cout << "Couldnt create Window" << endl;
+		return false;
+	}
+
 	//Save openGl states
 	glContext = SDL_GL_CreateContext(_window);
 	GLenum errorGl = glewInit();
-	if (errorGl != GLEW_OK)
+
+	//Glew init check.
+	if (errorGl != GLEW_OK) {
 		cout << "Couldnt Initalize Glew!" << endl;
+		return false;
+	}
+
 	//Create a double buffered window to prevent artifacts
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	//Set screen to black (red, green, blue, alpha)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
 	return true;
 }
 
