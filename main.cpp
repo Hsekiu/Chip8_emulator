@@ -284,20 +284,52 @@ void processInput() {
 		else if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym) {
 			case SDLK_1:
-				cout << "Pressed 1" << endl;
-				chip.keys[1] = 1;
+				chip.keys[0] = 1;
 				break;
 			case SDLK_2:
-				cout << "Pressed 2" << endl;
 				chip.keys[2] = 1;
 				break;
 			case SDLK_3:
-				cout << "Pressed 3" << endl;
 				chip.keys[3] = 1;
 				break;
 			case SDLK_4:
-				cout << "Pressed 4" << endl;
 				chip.keys[4] = 1;
+				break;
+			case SDLK_q:
+				chip.keys[5] = 1;
+				break;
+			case SDLK_w:
+				chip.keys[6] = 1;
+				break;
+			case SDLK_e:
+				chip.keys[7] = 1;
+				break;
+			case SDLK_r:
+				chip.keys[8] = 1;
+				break;
+			case SDLK_a:
+				chip.keys[9] = 1;
+				break;
+			case SDLK_s:
+				chip.keys[10] = 1;
+				break;
+			case SDLK_d:
+				chip.keys[11] = 1;
+				break;
+			case SDLK_f:
+				chip.keys[12] = 1;
+				break;
+			case SDLK_z:
+				chip.keys[13] = 1;
+				break;
+			case SDLK_x:
+				chip.keys[14] = 1;
+				break;
+			case SDLK_c:
+				chip.keys[15] = 1;
+				break;
+			case SDLK_v:
+				chip.keys[16] = 1;
 				break;
 			case SDLK_SPACE:
 				if (_emulationState == EmulationState::PAUSE) {
@@ -311,25 +343,57 @@ void processInput() {
 		else if (event.type == SDL_KEYUP) {
 			switch (event.key.keysym.sym) {
 			case SDLK_1:
-				cout << "Let go of 1" << endl;
 				chip.keys[1] = 0;
 				break;
 			case SDLK_2:
-				cout << "Let go of 2" << endl;
 				chip.keys[2] = 0;
 				break;
 			case SDLK_3:
-				cout << "Let go of 3" << endl;
 				chip.keys[3] = 0;
 				break;
 			case SDLK_4:
-				cout << "Let go of 4" << endl;
 				chip.keys[4] = 0;
+				break;
+			case SDLK_q:
+				chip.keys[5] = 0;
+				break;
+			case SDLK_w:
+				chip.keys[6] = 0;
+				break;
+			case SDLK_e:
+				chip.keys[7] = 0;
+				break;
+			case SDLK_r:
+				chip.keys[8] = 0;
+				break;
+			case SDLK_a:
+				chip.keys[9] = 0;
+				break;
+			case SDLK_s:
+				chip.keys[10] = 0;
+				break;
+			case SDLK_d:
+				chip.keys[11] = 0;
+				break;
+			case SDLK_f:
+				chip.keys[12] = 0;
+				break;
+			case SDLK_z:
+				chip.keys[13] = 0;
+				break;
+			case SDLK_x:
+				chip.keys[14] = 0;
+				break;
+			case SDLK_c:
+				chip.keys[15] = 0;
+				break;
+			case SDLK_v:
+				chip.keys[16] = 0;
 				break;
 			case SDLK_LEFT:
 				step = true;
 				break;
-			case SDLK_r:
+			case SDLK_TAB:
 				cout << "Reloading game" << endl;
 				_emulationState = EmulationState::FINISH;
 				break;

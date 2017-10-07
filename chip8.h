@@ -17,7 +17,8 @@ public:
 	bool cycle();
 
 	std::string hexString(int a);
-	const unsigned short start = 0x200;
+	const unsigned short EMU_START = 0x200;
+	const unsigned short FONT_START = 0x000;
 	unsigned short screen[32][64];
 	void printData();
 	void updateTimers();
