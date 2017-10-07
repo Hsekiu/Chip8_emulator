@@ -283,125 +283,53 @@ void processInput() {
 		}
 		else if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym) {
-			case SDLK_1:
-				chip.keys[0] = 1;
-				break;
-			case SDLK_2:
-				chip.keys[2] = 1;
-				break;
-			case SDLK_3:
-				chip.keys[3] = 1;
-				break;
-			case SDLK_4:
-				chip.keys[4] = 1;
-				break;
-			case SDLK_q:
-				chip.keys[5] = 1;
-				break;
-			case SDLK_w:
-				chip.keys[6] = 1;
-				break;
-			case SDLK_e:
-				chip.keys[7] = 1;
-				break;
-			case SDLK_r:
-				chip.keys[8] = 1;
-				break;
-			case SDLK_a:
-				chip.keys[9] = 1;
-				break;
-			case SDLK_s:
-				chip.keys[10] = 1;
-				break;
-			case SDLK_d:
-				chip.keys[11] = 1;
-				break;
-			case SDLK_f:
-				chip.keys[12] = 1;
-				break;
-			case SDLK_z:
-				chip.keys[13] = 1;
-				break;
-			case SDLK_x:
-				chip.keys[14] = 1;
-				break;
-			case SDLK_c:
-				chip.keys[15] = 1;
-				break;
-			case SDLK_v:
-				chip.keys[16] = 1;
-				break;
-			case SDLK_SPACE:
-				if (_emulationState == EmulationState::PAUSE) {
-					_emulationState = EmulationState::START;
-				}
-				else {
-					_emulationState = EmulationState::PAUSE;
-				}
-			}
+				case SDLK_1: chip.keys[1] = 1; break;
+				case SDLK_2: chip.keys[2] = 1; break;
+				case SDLK_3: chip.keys[3] = 1; break;
+				case SDLK_4: chip.keys[12] = 1; break;
+				case SDLK_q: chip.keys[4] = 1; break;
+				case SDLK_w: chip.keys[5] = 1; break;
+				case SDLK_e: chip.keys[6] = 1; break;
+				case SDLK_r: chip.keys[13] = 1; break;
+				case SDLK_a: chip.keys[7] = 1; break;
+				case SDLK_s: chip.keys[8] = 1; break;
+				case SDLK_d: chip.keys[9] = 1; break;
+				case SDLK_f: chip.keys[14] = 1; break;
+				case SDLK_z: chip.keys[10] = 1; break;
+				case SDLK_x: chip.keys[0] = 1; break;
+				case SDLK_c: chip.keys[11] = 1; break;
+				case SDLK_v: chip.keys[15] = 1; break;
+				case SDLK_SPACE:
+					if (_emulationState == EmulationState::PAUSE) {
+						_emulationState = EmulationState::START;
+					}
+					else {
+						_emulationState = EmulationState::PAUSE;
+					} break;
+			} break;
 		}
 		else if (event.type == SDL_KEYUP) {
 			switch (event.key.keysym.sym) {
-			case SDLK_1:
-				chip.keys[1] = 0;
-				break;
-			case SDLK_2:
-				chip.keys[2] = 0;
-				break;
-			case SDLK_3:
-				chip.keys[3] = 0;
-				break;
-			case SDLK_4:
-				chip.keys[4] = 0;
-				break;
-			case SDLK_q:
-				chip.keys[5] = 0;
-				break;
-			case SDLK_w:
-				chip.keys[6] = 0;
-				break;
-			case SDLK_e:
-				chip.keys[7] = 0;
-				break;
-			case SDLK_r:
-				chip.keys[8] = 0;
-				break;
-			case SDLK_a:
-				chip.keys[9] = 0;
-				break;
-			case SDLK_s:
-				chip.keys[10] = 0;
-				break;
-			case SDLK_d:
-				chip.keys[11] = 0;
-				break;
-			case SDLK_f:
-				chip.keys[12] = 0;
-				break;
-			case SDLK_z:
-				chip.keys[13] = 0;
-				break;
-			case SDLK_x:
-				chip.keys[14] = 0;
-				break;
-			case SDLK_c:
-				chip.keys[15] = 0;
-				break;
-			case SDLK_v:
-				chip.keys[16] = 0;
-				break;
-			case SDLK_LEFT:
-				step = true;
-				break;
-			case SDLK_TAB:
-				cout << "Reloading game" << endl;
-				_emulationState = EmulationState::FINISH;
-				break;
-			case SDLK_UP:
-				cout << "Printing data" << endl;
-				chip.printData();
-				break;
-			}
+				case SDLK_1: chip.keys[1] = 0; break;
+				case SDLK_2: chip.keys[2] = 0; break;
+				case SDLK_3: chip.keys[3] = 0; break;
+				case SDLK_4: chip.keys[12] = 0; break;
+				case SDLK_q: chip.keys[4] = 0; break;
+				case SDLK_w: chip.keys[5] = 0; break;
+				case SDLK_e: chip.keys[6] = 0; break;
+				case SDLK_r: chip.keys[13] = 0; break;
+				case SDLK_a: chip.keys[7] = 0; break;
+				case SDLK_s: chip.keys[8] = 0; break;
+				case SDLK_d: chip.keys[9] = 0; break;
+				case SDLK_f: chip.keys[14] = 0; break;
+				case SDLK_z: chip.keys[10] = 0; break;
+				case SDLK_x: chip.keys[0] = 0; break;
+				case SDLK_c: chip.keys[11] = 0; break;
+				case SDLK_v: chip.keys[15] = 0; break;
+				case SDLK_LEFT: step = true; break;
+				case SDLK_TAB: _emulationState = EmulationState::FINISH; break;
+				case SDLK_UP: chip.printData(); break;
+			} break;
 		}
 		//A game file is dragged into the window.
 		else if (event.type == SDL_DROPFILE) {
