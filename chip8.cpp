@@ -121,9 +121,9 @@ void chip8::printData() {
 	std::cout << "I  " << (hexString)(I) << std::endl;
 	std::cout << std::endl;
 
-	for (int i = 0; i < sizeof(keys) / sizeof(int); i++) {
+	/*for (int i = 0; i < sizeof(keys) / sizeof(int); i++) {
 		std::cout << "Key " << i << " is: " << keys[i] << std::endl;
-	}
+	}*/
 }
 
 bool chip8::cycle() {
@@ -165,7 +165,6 @@ bool chip8::cycle() {
 
 			default:
 				std::cout << " - Opcode not implemented in 0x0000" << std::endl;
-				pc += 2;
 			}
 		}
 		break;
@@ -271,7 +270,6 @@ bool chip8::cycle() {
 			case 0x0004: //ADD Vx, Vy
 			{
 				std::cout << " - Set V[x] += " << "V[" << (int)y << "]" << std::endl;
-				V[x] += V[y];
 
 				if (((int)V[x] + (int)V[y]) > 255) {
 					V[0xF] = 1;
@@ -280,6 +278,8 @@ bool chip8::cycle() {
 					V[0xF] = 0;
 				}
 
+				V[x] += V[y];
+
 				pc += 2;
 			}
 			break;
@@ -287,13 +287,14 @@ bool chip8::cycle() {
 			case 0x0005: //SUB Vx, Vy
 			{
 				std::cout << " - Set V[x] -= " << "V[" << (int)y << "]" << std::endl;
-				V[x] -= V[y];
 
-				if (V[y] > V[x]) {
+				if (V[y] >= V[x]) {
 					V[0xF] = 1;
 				} else {
 					V[0xF] = 0;
 				}
+
+				V[x] -= V[y];
 
 				pc += 2;
 			}
@@ -343,7 +344,6 @@ bool chip8::cycle() {
 
 			default:
 				std::cout << " - Opcode not implemented in 0x8000" << std::endl;
-				pc += 2;
 			}
 		}
 		break;
@@ -439,7 +439,6 @@ bool chip8::cycle() {
 
 			default:
 				std::cout << " - Opcode not implemented in 0xE000" << std::endl;
-				pc += 2;
 			}
 		}
 		break;
@@ -509,6 +508,8 @@ bool chip8::cycle() {
 					memory[I + i] = V[i];
 				}
 
+				I++;
+
 				pc += 2;
 			}
 			break;
@@ -529,7 +530,6 @@ bool chip8::cycle() {
 
 			default:
 				std::cout << " - Opcode not implemented in 0xF000" << std::endl;
-				pc += 2;
 			}
 		}
 		break;

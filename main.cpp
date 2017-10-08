@@ -173,7 +173,7 @@ bool initializeSDL() {
 
 	//Glew init check.
 	if (errorGl != GLEW_OK) {
-		cout << "Couldnt Initalize Glew!" << endl;
+		cout << "Couldnt Initalize Glew!" << glewGetErrorString(errorGl) << endl;
 		return false;
 	}
 
