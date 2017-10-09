@@ -375,8 +375,9 @@ bool chip8::cycle() {
 		case 0xC000: //Cxkk - RND Vx, byte
 		{
 			int random = rand() % 255;
+			std::cout << "Random is: " << random << std::endl;
 			std::cout << " - Set V[" << (int)x << "] to random number " << (int)((kk) & random) << std::endl;
-			V[x] = kk & random;
+			V[x] = kk & (char)random;
 			pc += 2;
 		}
 		break;
@@ -502,9 +503,17 @@ bool chip8::cycle() {
 
 			case 0x0033: //LD B, Vx
 			{
-				memory[I] = (char)((int)V[x] / 100);
-				memory[I + 1] = (char)(((int)V[x] / 100) % 10);
-				memory[I + 2] = (char)((((int)V[x] / 100) % 10) % 10);
+				std::cout << " - Storing BCD representation of Vx in memory" << std::endl;
+
+				int n = V[x];
+
+				short count = 0;
+				for (int i = 2; i >= 0; i--) {
+					memory[I + count] = (n - (n % (int)pow(10, i))) / (int)pow(10, i);
+					std::cout << i << " Number is : " <<(int) memory[I + count] << std::endl;
+					n -= memory[I + count] * (int)pow(10, i);
+					count++;
+				}
 
 				pc += 2;
 			}
