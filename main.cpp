@@ -11,8 +11,6 @@
 #include <bitset>
 #include <algorithm>
 
-#include <Windows.h>
-
 using namespace std;
 
 const int DISPLAY_WIDTH = 640;
@@ -31,7 +29,7 @@ EmulationState _emulationState;
 SDL_Window *_window;
 SDL_GLContext glContext;
 
-char* title = "Chip8 emulator by Petr Krakora";
+char* title = "Chip8 interpreter";
 chip8 chip;
 
 bool step;
