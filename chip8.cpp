@@ -500,6 +500,16 @@ bool chip8::cycle() {
 			}
 			break;
 
+			case 0x0033: //LD B, Vx
+			{
+				memory[I] = (char)((int)V[x] / 100);
+				memory[I + 1] = (char)(((int)V[x] / 100) % 10);
+				memory[I + 2] = (char)((((int)V[x] / 100) % 10) % 10);
+
+				pc += 2;
+			}
+			break;
+
 			case 0x0055: //Fx55 - LD [I], Vx
 			{
 				std::cout << " - Stored V[0] through V[ " << (int)x << "] in memory starting at location " << (int)I << std::endl;
