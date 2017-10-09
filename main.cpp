@@ -11,6 +11,8 @@
 #include <bitset>
 #include <algorithm>
 
+#include <Windows.h>
+
 using namespace std;
 
 const int DISPLAY_WIDTH = 640;
@@ -49,10 +51,14 @@ void drawScreen();
 void mainLoop();
 bool loadGame();
 bool loadAssets();
+void cleanUp();
 
 int main(int argc, char** argv) {
 
-	initializeSDL();
+	//Close application if initialization failure.
+	if (!initializeSDL()) {
+		cleanUp();
+	}
 
 	beep = NULL;
 
@@ -73,7 +79,15 @@ int main(int argc, char** argv) {
 	//Main loop of program.
 	mainLoop();
 
+	cleanUp();
+
 	return 0;
+}
+
+void cleanUp() {
+	Mix_FreeChunk(beep);
+	Mix_CloseAudio();
+	SDL_Quit();
 }
 
 bool initializeChip(string game) {
@@ -178,7 +192,7 @@ bool initializeSDL() {
 	}
 
 	//Initialize SDL_mixer 
-	if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) { 
+	if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) {
 		cout << "Couldnt Initialize SDL_mixer: " << Mix_GetError() << endl;
 		return false; 
 	}
@@ -198,7 +212,7 @@ bool loadAssets() {
 	beep = Mix_LoadWAV("tone_beep.wav");
 
 	//Lower volume to 10 out of 0 to 128.
-	Mix_VolumeChunk(beep, 10);
+	//Mix_VolumeChunk(beep, 10);
 
 	//Check if problem loading SFX.
 	if (beep == NULL) {
