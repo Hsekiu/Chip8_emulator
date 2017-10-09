@@ -42,10 +42,10 @@ private:
 	unsigned short delayTimer;
 	unsigned short soundTimer;
 
-	char x;
-	char y;
-	char kk;
-	short nnn;
-	char n;
+	unsigned char x;
+	unsigned char y;
+	unsigned char kk;
+	unsigned short nnn;
+	unsigned char n;
 };
 

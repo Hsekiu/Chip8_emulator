@@ -208,7 +208,7 @@ bool chip8::cycle() {
 		case 0x5000: //SE Vx, Vy
 		{
 			std::cout << " - Skip next instruction if V[" << (hexString)(x) << "] = " << (hexString)(y) << std::endl;
-			if ((V[x]) == y) {
+			if ((V[x]) == V[y]) {
 				pc += 2;
 			}
 			pc += 2;
@@ -271,7 +271,7 @@ bool chip8::cycle() {
 			{
 				std::cout << " - Set V[x] += " << "V[" << (int)y << "]" << std::endl;
 
-				if (((int)V[x] + (int)V[y]) > 255) {
+				if ((int(V[x]) + int(V[y])) > 255) {
 					V[0xF] = 1;
 				}
 				else {
@@ -288,7 +288,7 @@ bool chip8::cycle() {
 			{
 				std::cout << " - Set V[x] -= " << "V[" << (int)y << "]" << std::endl;
 
-				if (V[y] >= V[x]) {
+				if (V[x] >= V[y]) {
 					V[0xF] = 1;
 				} else {
 					V[0xF] = 0;
