@@ -20,11 +20,11 @@ public:
 	std::string hexString(int a);
 	const unsigned short EMU_START = 0x200;
 	const unsigned short FONT_START = 0x000;
-	unsigned short screen[32][64];
+	bool screen[32][64];
 	void printData();
 	void updateTimers();
 
-	unsigned int keys[16];
+	unsigned char keys[16];
 
 	bool drawFlag;
 	bool soundFlag;
