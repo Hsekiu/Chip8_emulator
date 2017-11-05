@@ -209,8 +209,8 @@ bool loadAssets() {
 	//Load the music 
 	beep = Mix_LoadWAV("tone_beep.wav");
 
-	//Lower volume to 10 out of 0 to 128.
-	//Mix_VolumeChunk(beep, 10);
+	//Lower volume to 16 out of 0 to 128.
+	Mix_VolumeChunk(beep, MIX_MAX_VOLUME/8);
 
 	//Check if problem loading SFX.
 	if (beep == NULL) {
